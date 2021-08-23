@@ -1,0 +1,52 @@
+[
+  {
+    "cat_nombre": "Mochilas",
+    "cat_valor": 1,
+    "cat_imagen": "http://artewayuu.hector.com.co/resources/images/categories/mochilas.jpg"
+  },
+  {
+    "cat_nombre": "Bolsos",
+    "cat_valor": 2,
+    "cat_imagen": "http://artewayuu.hector.com.co/resources/images/categories/bolsos.jpg"
+  },
+  {
+    "cat_nombre": "Carteras",
+    "cat_valor": 4,
+    "cat_imagen": "http://artewayuu.hector.com.co/resources/images/categories/carteras.jpg"
+  },
+  {
+    "cat_nombre": "Sombreros",
+    "cat_valor": 8,
+    "cat_imagen": "http://artewayuu.hector.com.co/resources/images/categories/sombreros.jpg"
+  },
+  {
+    "cat_nombre": "Sandalias",
+    "cat_valor": 16,
+    "cat_imagen": "http://artewayuu.hector.com.co/resources/images/categories/sandalias.jpg"
+  },
+  {
+    "cat_nombre": "Mantas",
+    "cat_valor": 32,
+    "cat_imagen": "http://artewayuu.hector.com.co/resources/images/categories/mantas.jpg"
+  },
+  {
+    "cat_nombre": "Bisutería Artesanal",
+    "cat_valor": 64,
+    "cat_imagen": "http://artewayuu.hector.com.co/resources/images/categories/bisuteria.jpg"
+  },
+  {
+    "cat_nombre": "Llaveros",
+    "cat_valor": 128,
+    "cat_imagen": "http://artewayuu.hector.com.co/resources/images/categories/llaveros.jpg"
+  },
+  {
+    "cat_nombre": "Chinchorros",
+    "cat_valor": 256,
+    "cat_imagen": "http://artewayuu.hector.com.co/resources/images/categories/chinchorros.jpg"
+  },
+  {
+    "cat_nombre": "Decorativos",
+    "cat_valor": 512,
+    "cat_imagen": "http://artewayuu.hector.com.co/resources/images/categories/decorativos.jpg"
+  }
+]
