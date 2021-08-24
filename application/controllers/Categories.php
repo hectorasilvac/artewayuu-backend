@@ -23,6 +23,11 @@ class Categories extends CI_Controller
 
 	public function all()
 	{
-		print_r($this->users_model->get_all());
+		$query = $this->categories_model->get_all();
+
+		$result['data'] = $query;
+		$result['message'] = NULL;
+
+		echo json_encode($result);
 	}
 }

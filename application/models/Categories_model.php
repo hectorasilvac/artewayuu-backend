@@ -19,8 +19,8 @@ class Categories_model extends CI_Model
 
 	public function get_all() 
 	{
-		$this->db->select('*');
-		$query = $this->db->get('usuario');
+		$this->db->select('cat_id AS id, cat_nombre AS name, cat_valor AS value, cat_imagen AS image');
+		$query = $this->db->get('categoria');
 		return $query->result_array();
 	}
 }
