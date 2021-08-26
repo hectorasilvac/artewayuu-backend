@@ -11,7 +11,7 @@ class Discounts extends CI_Controller
 
 	public function add()
 	{
-		var_dump($this->input->post());
+		var_dump($this->input->raw_input_stream());
 		exit();
 		// $result = [];
 
