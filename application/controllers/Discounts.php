@@ -11,6 +11,10 @@ class Discounts extends CI_Controller
 
 	public function add()
 	{
+
+		print_r($this->input->post());
+		exit();
+
 		$result = [];
 
 		if ($this->input->method(TRUE) !== 'POST')
