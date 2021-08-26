@@ -1,0 +1,35 @@
+[
+	{
+		"pro_nombre": "Mochila Wayu Naranja en Laberinto Fabricada a Mano",
+		"pro_descripcion": "La mochila Wayuú es elaborada 100% a mano por una sola mujer que le da su diseño propio. No solo es un bolso.",
+		"pro_stock": 5,
+		// "pro_pagos": 1,
+		"pro_visibilidad": 1,
+        "cat_id": 1
+	},
+	{
+		"pro_nombre": "Mochila Wayuú de Borlas Blanca con complementos Multicolor",
+		"pro_descripcion": "Más que un accesorio de moda, el bolso wayuu es considerado una pieza de arte por ello la admiración en su trabajo es infinita.",
+		"pro_stock": 9,
+		// "pro_pagos": 1,
+		"pro_visibilidad": 1,
+        "cat_id": 1
+	},
+	{
+		"pro_nombre": "Sandalia Wayuu Tres Pompones",
+		"pro_descripcion": "El diseño de sus tejidos en obra de arte de una indígena Wayuu quien teje a mano los diseños que le dan el toque de estilo y explosión de color.",
+		"pro_stock": 3,
+		// "pro_pagos": 1,
+		"pro_visibilidad": 1,
+        "cat_id": 5 
+	},
+	{
+		"pro_nombre": "Sombrero Wayuu Tricolor",
+		"pro_descripcion": "Sombrero Guajiro elaborado en Palma Mawisa por la etnia wayuú, Guajira - Colombia.",
+		"pro_stock": 26,
+		// "pro_pagos": 1,
+		"pro_visibilidad": 1,
+        "cat_id": 5
+	},
+
+]

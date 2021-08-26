@@ -51,6 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 $route['users'] = 'users/view';
 $route['categories/(:any)'] = 'categories/$1';
+$route['discounts/(:any)'] = 'discounts/$1';
 
 $route['default_controller'] = 'welcome';
 $route['404_override'] = '';
