@@ -9,9 +9,9 @@ class Discounts_model extends CI_Model
 	public function add()
 	{
 		$data = [
-			'des_cantidad_minima' => $this->input->post('minimum'),
-			'des_cantidad_maxima' => $this->input->post('maximum'),
-			'des_porcentaje' => $this->input->post('percentage')
+			'des_cantidad_minima' => $this->input->input_stream()('minimum'),
+			'des_cantidad_maxima' => $this->input->input_stream()('maximum'),
+			'des_porcentaje' => $this->input->input_stream()('percentage')
 		];
 
 		return $this->db->insert('descuento', $data);
