@@ -11,7 +11,8 @@ class Discounts extends CI_Controller
 
 	public function add()
 	{
-		var_dump($this->input->raw_input_stream());
+		$xd = json_decode(file_get_contents("php://input"), true);
+		var_dump( $xd['minimum'] );
 		exit();
 		// $result = [];
 
