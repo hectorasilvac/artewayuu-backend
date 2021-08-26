@@ -11,35 +11,35 @@ class Discounts extends CI_Controller
 
 	public function add()
 	{
-		echo $this->input->input_stream('minimum');
+		echo $this->input->raw_input_stream;
 		exit()
 		// $result = [];
 
-		if ($this->input->method(TRUE) !== 'POST')
-		{
-			$result['data'] = FALSE;
-			$result['message'] = 'Método de solicitud no válido.';
+		// if ($this->input->method(TRUE) !== 'POST')
+		// {
+		// 	$result['data'] = FALSE;
+		// 	$result['message'] = 'Método de solicitud no válido.';
 
-			echo json_encode($result);
-			exit();
-		}
+		// 	echo json_encode($result);
+		// 	exit();
+		// }
 
-		$query = $this->discounts_model->add();
+		// $query = $this->discounts_model->add();
 
-		if ( ! $query)
-		{
-			$result['data'] = FALSE;
-			$result['message'] = 'No se ha podido agregar el descuento.';
+		// if ( ! $query)
+		// {
+		// 	$result['data'] = FALSE;
+		// 	$result['message'] = 'No se ha podido agregar el descuento.';
 
-			echo json_encode($result);
-			exit();
-		}
+		// 	echo json_encode($result);
+		// 	exit();
+		// }
 
-		$result['data'] = TRUE;
-		$result['message'] = 'Descuento agregado correctamente.';
+		// $result['data'] = TRUE;
+		// $result['message'] = 'Descuento agregado correctamente.';
 
-		echo json_encode($result);
-		exit();
+		// echo json_encode($result);
+		// exit();
 	}
 
 	// public function all()
