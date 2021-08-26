@@ -14,7 +14,7 @@ class Discounts_model extends CI_Model
 			'des_porcentaje' => $this->input->post('percentage')
 		];
 
-		return $this->db->insert('discounts', $data);
+		return $this->db->insert('descuento', $data);
 	}
 
 	public function get_all() 
