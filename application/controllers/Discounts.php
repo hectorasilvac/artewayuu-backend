@@ -11,45 +11,22 @@ class Discounts extends CI_Controller
 
 	public function add()
 	{
-		$xd = json_decode(file_get_contents("php://input"), true);
-		var_dump( $xd['minimum'] );
+		if ($this->input->method(TRUE) !== 'POST')
+		{
+			echo json_encode(['data' => FALSE, 'message' => 'Método de solicitud no válido.']);
+			exit();
+		}
+
+		$params = json_decode(file_get_contents("php://input"), FILE_USE_INCLUDE_PATH);
+		$query = $this->discounts_model->add($params);
+
+		if ( ! $query)
+		{
+			echo json_encode(['data' => FALSE, 'message' => 'Error al agregar descuento.']);
+			exit();
+		}
+
+		echo json_encode(['data' => TRUE, 'message' => 'Descuento agregado correctamente.']);
 		exit();
-		// $result = [];
-
-		// if ($this->input->method(TRUE) !== 'POST')
-		// {
-		// 	$result['data'] = FALSE;
-		// 	$result['message'] = 'Método de solicitud no válido.';
-
-		// 	echo json_encode($result);
-		// 	exit();
-		// }
-
-		// $query = $this->discounts_model->add();
-
-		// if ( ! $query)
-		// {
-		// 	$result['data'] = FALSE;
-		// 	$result['message'] = 'No se ha podido agregar el descuento.';
-
-		// 	echo json_encode($result);
-		// 	exit();
-		// }
-
-		// $result['data'] = TRUE;
-		// $result['message'] = 'Descuento agregado correctamente.';
-
-		// echo json_encode($result);
-		// exit();
 	}
-
-	// public function all()
-	// {
-	// 	$query = $this->discounts_model->get_all();
-
-	// 	$result['data'] = $query;
-	// 	$result['message'] = NULL;
-
-	// 	echo json_encode($result);
-	// }
 }
