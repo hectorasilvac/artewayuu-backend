@@ -13,7 +13,7 @@ class Discounts extends CI_Controller
 	{
 		$xd = json_decode(file_get_contents("php://input"), true);
 		// var_dump( $xd['minimum'] );
-		print_r($this->input->raw_input_stream);
+		print_r($this->input->input_stream('minimum'));
 		exit();
 		// $result = [];
 
