@@ -28,5 +28,5 @@ class Discounts extends CI_Controller
 
 	// 	echo json_encode(['data' => TRUE, 'message' => 'Descuento agregado correctamente.']);
 	// 	exit();
-	// }
+	}
 }
