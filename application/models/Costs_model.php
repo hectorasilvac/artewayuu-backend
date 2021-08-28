@@ -13,7 +13,7 @@
 				'cos_unidad_medida'  => $params['unit'],
 				'cos_cantidad'       => $params['quantity'],
 				'cos_valor_unitario' => $params['value'],
-				'cos_unidad_mensual' => $params['monthly_unit'] ?: NULL,
+				'cos_unidad_mensual' => $params['monthlyUnit'] ?: NULL,
 				'cos_total'          => $params['total'],
 			];
 
