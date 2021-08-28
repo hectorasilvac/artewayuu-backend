@@ -11,26 +11,22 @@
 
 		public function add()
 		{
-//			if ($this->input->method(TRUE) !== 'POST')
-//			{
-//				echo json_encode(['data' => FALSE, 'message' => 'Método de solicitud no válido.']);
-//				exit();
-//			}
+			if ($this->input->method(TRUE) !== 'POST')
+			{
+				echo json_encode(['data' => FALSE, 'message' => 'Método de solicitud no válido.']);
+				exit();
+			}
 //
 			$params = json_decode(file_get_contents("php://input"), FILE_USE_INCLUDE_PATH);
-			print_r($params);
+			$query  = $this->costs_model->add($params);
+
+			if (!$query)
+			{
+				echo json_encode(['data' => FALSE, 'message' => 'Error al agregar costo.']);
+				exit();
+			}
+
+			echo json_encode(['data' => TRUE, 'message' => 'Costo agregado correctamente.']);
 			exit();
-
-
-//			$query  = $this->costs_model->add($params);
-//
-//			if (!$query)
-//			{
-//				echo json_encode(['data' => FALSE, 'message' => 'Error al agregar costo.']);
-//				exit();
-//			}
-//
-//			echo json_encode(['data' => TRUE, 'message' => 'Costo agregado correctamente.']);
-//			exit();
 		}
 	}
