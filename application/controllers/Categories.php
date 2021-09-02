@@ -7,7 +7,6 @@
 			parent::__construct();
 			$this->load->model('categories_model');
 			// $this->load->helper('url_helper');
-			print_r('Holaaaa');
 		}
 
 		public function add()

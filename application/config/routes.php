@@ -54,6 +54,7 @@
 	$route['categories/(:any)'] = 'categories/$1';
 	$route['discounts/(:any)']  = 'discounts/$1';
 	$route['costs/(:any)']      = 'costs/$1';
+	$route['images/(:any)']     = 'images/$1';
 
 	$route['default_controller']   = 'welcome';
 	$route['404_override']         = '';
