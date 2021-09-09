@@ -81,6 +81,11 @@ class Products_model extends CI_Model
 
         foreach ($images as $data)
         {
+            echo '<pre>';
+            print_r(basename($data['uri']));
+            echo '</pre>';
+            die();
+
             $name          = time() . '_' . basename($data['uri']);
             $image         = base64_decode($data['base64']);
             $file_path     = dirname(__DIR__, 2) . '/resources/images/products/uploads/' . $name;
