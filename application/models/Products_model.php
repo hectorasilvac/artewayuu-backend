@@ -9,10 +9,10 @@ class Products_model extends CI_Model
 
     public function add(array $params)
     {
-        echo '<pre>';
-        print_r($_SERVER['SERVER_NAME']);
-        echo '</pre>';
-        die();
+        // echo '<pre>';
+        // print_r();
+        // echo '</pre>';
+        // die();
 
         unset($params['Descuentos']);
 
@@ -97,7 +97,11 @@ class Products_model extends CI_Model
             $name          = time() . '_' . basename($data['uri']);
             $image         = base64_decode($data['base64']);
             $file_path     = dirname(__DIR__, 2) . '/resources/images/products/uploads/' . $name;
+            $path = "http://{$_SERVER['SERVER_NAME']}/resources/images/products/uploads/{$name}";
             $uploaded_file = file_put_contents($file_path, $image, LOCK_EX);
+
+            print_r($file_path);
+            print_r($path);
     
             if ( ! $uploaded_file)
             {
@@ -106,7 +110,7 @@ class Products_model extends CI_Model
             }
 
             $batch_data[] = [
-                 'img_url' => $file_path,
+                 'img_url' => $path,
                  'pro_id' => $product_id
              ];
         }
