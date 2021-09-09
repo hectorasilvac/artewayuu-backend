@@ -4,12 +4,18 @@ class Products_model extends CI_Model
 {
     public function __construct()
     {
+        $this->load->helper('url');
     }
 
     public function add(array $params)
     {
+        echo '<pre>';
+        print_r(base_url());
+        echo '</pre>';
+        die();
+
         unset($params['Descuentos']);
-        
+
         $price_id = NULL;
 
         if (in_array('price', array_keys($params)))
