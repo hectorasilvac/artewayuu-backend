@@ -9,11 +9,6 @@ class Products_model extends CI_Model
 
     public function add(array $params)
     {
-        // echo '<pre>';
-        // print_r();
-        // echo '</pre>';
-        // die();
-
         unset($params['Descuentos']);
 
         $price_id = NULL;
@@ -39,9 +34,9 @@ class Products_model extends CI_Model
                 foreach ($value as $item)
                 {
                     $data[] = [
-                        'dta_nombre' => $key, 
-                        'dta_valor' => $item,
-                        'pro_id' => $product_id,
+                        'dta_nombre' => $key,
+                        'dta_valor'  => $item,
+                        'pro_id'     => $product_id,
                     ];
                 }
                 continue;
@@ -49,19 +44,19 @@ class Products_model extends CI_Model
 
             $data[] = [
                 'dta_nombre' => $key,
-                'dta_valor' => $value,
-                'pro_id' => $product_id,
+                'dta_valor'  => $value,
+                'pro_id'     => $product_id,
             ];
         }
 
         return $this->db->insert_batch('detalle', $data);
     }
 
-    public function get_all(int $limit) 
-	{
-		// $this->db->select('cat_id AS id, cat_nombre AS name, cat_valor AS value, cat_imagen AS image');
-		// $query = $this->db->get('categoria');
-		// return $query->result_array();
+    public function get_all(int $limit)
+    {
+        // $this->db->select('cat_id AS id, cat_nombre AS name, cat_valor AS value, cat_imagen AS image');
+        // $query = $this->db->get('categoria');
+        // return $query->result_array();
 
         $this->db->select('producto.pro_id AS id, dta_valor AS name, precio.prc_valor_total AS price');
         $this->db->select('(SELECT img_url FROM imagen WHERE imagen.pro_id = id LIMIT 1) AS image');
@@ -81,7 +76,7 @@ class Products_model extends CI_Model
         //     image:
         //       'https://cardoli.com/164-thickbox_default/mochila-wayuu-naranja-en-laberinto.jpg',
         //   },
-	}
+    }
 
     private function insert_images(array $images, int $product_id): int | bool
     {
@@ -97,12 +92,9 @@ class Products_model extends CI_Model
             $name          = time() . '_' . basename($data['uri']);
             $image         = base64_decode($data['base64']);
             $file_path     = dirname(__DIR__, 2) . '/resources/images/products/uploads/' . $name;
-            $path = "http://{$_SERVER['SERVER_NAME']}/resources/images/products/uploads/{$name}";
+            $path          = "http://{$_SERVER['SERVER_NAME']}/resources/images/products/uploads/{$name}";
             $uploaded_file = file_put_contents($file_path, $image, LOCK_EX);
 
-            print_r($file_path);
-            print_r($path);
-    
             if ( ! $uploaded_file)
             {
                 echo json_encode(['data' => false, 'message' => 'Se ha producido un error al cargar la imagen.']);
@@ -110,11 +102,10 @@ class Products_model extends CI_Model
             }
 
             $batch_data[] = [
-                 'img_url' => $path,
-                 'pro_id' => $product_id
-             ];
+                'img_url' => $path,
+                'pro_id'  => $product_id,
+            ];
         }
-        
 
         return $this->db->insert_batch('imagen', $batch_data);
     }
@@ -133,7 +124,7 @@ class Products_model extends CI_Model
     {
         $product = [
             'prc_id' => $price_id,
-            'cat_id'    => $category_id,
+            'cat_id' => $category_id,
         ];
 
         return $this->run_query('producto', $product);
