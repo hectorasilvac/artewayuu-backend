@@ -10,7 +10,7 @@ class Products_model extends CI_Model
     public function add(array $params)
     {
         echo '<pre>';
-        print_r(dirname(__FILE__));
+        print_r($_SERVER['SERVER_NAME']);
         echo '</pre>';
         die();
 
