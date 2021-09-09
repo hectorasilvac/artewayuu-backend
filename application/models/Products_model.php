@@ -82,26 +82,26 @@ class Products_model extends CI_Model
         foreach ($images as $data)
         {
             echo '<pre>';
-            print_r(basename($data['uri']));
+            print_r(time() . '_' . basename($data['uri']));
             echo '</pre>';
-            die();
 
-            $name          = time() . '_' . basename($data['uri']);
-            $image         = base64_decode($data['base64']);
-            $file_path     = dirname(__DIR__, 2) . '/resources/images/products/uploads/' . $name;
-            $uploaded_file = file_put_contents($file_path, $image, LOCK_EX);
+            // $name          = time() . '_' . basename($data['uri']);
+            // $image         = base64_decode($data['base64']);
+            // $file_path     = dirname(__DIR__, 2) . '/resources/images/products/uploads/' . $name;
+            // $uploaded_file = file_put_contents($file_path, $image, LOCK_EX);
     
-            if ( ! $uploaded_file)
-            {
-                echo json_encode(['data' => false, 'message' => 'Se ha producido un error al cargar la imagen.']);
-                exit();
-            }
+            // if ( ! $uploaded_file)
+            // {
+            //     echo json_encode(['data' => false, 'message' => 'Se ha producido un error al cargar la imagen.']);
+            //     exit();
+            // }
 
-            $batch_data[] = [
-                 'img_url' => $file_path,
-                 'pro_id' => $product_id
-             ];
+            // $batch_data[] = [
+            //      'img_url' => $file_path,
+            //      'pro_id' => $product_id
+            //  ];
         }
+        die();
 
         return $this->db->insert_batch('imagen', $batch_data);
     }
