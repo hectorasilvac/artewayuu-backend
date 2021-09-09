@@ -8,7 +8,7 @@ class Images extends CI_Controller
         $this->load->model('images_model');
     }
 
-    public function add()
+    public function add(array $data)
     {
         // header('Content-type:application/json');
 

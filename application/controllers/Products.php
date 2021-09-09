@@ -40,7 +40,7 @@ class Products extends CI_Controller
             exit();
         }
 
-        $query = $this->fields_model->get_by_value(value:$value);
+        $query = $this->fields_model->get_by_value($value);
 
         if (count($query) === 0)
         {
@@ -50,5 +50,16 @@ class Products extends CI_Controller
 
         echo json_encode(['data' => $query, 'message' => NULL]);
         exit();
+    }
+
+    public function get_all(int|null $limit = 50)
+    {
+        $query = $this->products_model->get_all($limit);
+
+        $result['data'] = $query;
+        $result['message'] = NULL;
+
+        header('Content-type:application/json');
+        echo json_encode($result);
     }
 }

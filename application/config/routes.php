@@ -54,6 +54,11 @@ $route['users']             = 'users/view';
 $route['fields/(:num)']     = 'fields/get_by_value/$1';
 $route['categories/(:any)'] = 'categories/$1';
 $route['discounts/(:any)']  = 'discounts/$1';
+
+$route['products/all']  = 'products/get_all';
+$route['products/all/(:num)']  = 'products/get_all/$1';
+
+
 $route['costs/(:any)']      = 'costs/$1';
 $route['images/(:any)']     = 'images/$1';
 
