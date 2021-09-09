@@ -6,7 +6,6 @@
 		{
 			parent::__construct();
 			$this->load->model('categories_model');
-			// $this->load->helper('url_helper');
 		}
 
 		public function add()
