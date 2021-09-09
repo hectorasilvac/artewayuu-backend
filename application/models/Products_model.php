@@ -8,6 +8,8 @@ class Products_model extends CI_Model
 
     public function add(array $params)
     {
+        unset($params['Descuentos']);
+        
         $price_id = NULL;
 
         if (in_array('price', array_keys($params)))
@@ -85,7 +87,7 @@ class Products_model extends CI_Model
             {
                 continue;
             }
-            
+
             $name          = time() . '_' . basename($data['uri']);
             $image         = base64_decode($data['base64']);
             $file_path     = dirname(__DIR__, 2) . '/resources/images/products/uploads/' . $name;
