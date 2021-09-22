@@ -75,10 +75,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'xlf3ljx3beaucz9x.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',
-	'username' => 'pgwdqlwolzjce1a6',
-	'password' => 'mwlg0xc7tnwetvqm',
-	'database' => 'gyqkd125g6p69lz4',
+	'hostname' => 'sql550.main-hosting.eu',
+	'username' => 'u549391894_hector',
+	'password' => '#Ector9611171',
+	'database' => 'u549391894_artewayuu',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,

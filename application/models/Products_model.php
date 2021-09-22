@@ -7,6 +7,31 @@ class Products_model extends CI_Model
         $this->load->helper('url');
     }
 
+    public function check_user(string $user_id, string $user_email): array
+    {
+        $this->db->select('usu_id');
+        $this->db->join('informacionpersonal', 'usuario.inf_id = informacionpersonal.inf_id', 'left');
+        $this->db->where('usu_id', $user_id);
+        $this->db->where('inf_correo', $user_email);
+
+        $query = $this->db->get('usuario');
+
+        if ($query->num_rows() === 0)
+        {
+            return [
+                'data' => FALSE, 
+                'message' => 'Usuario no válido.'
+            ];
+            exit();
+        }
+
+        return [
+            'data' => TRUE, 
+            'message' => 'Usuario válido.'
+        ];
+        exit();
+    }
+
     public function add(array $params)
     {
         unset($params['Descuentos']);
@@ -19,7 +44,11 @@ class Products_model extends CI_Model
             unset($params['price']);
         }
 
-        $product_id = $this->insert_product($price_id, $params['category']);
+        $product_id = $this->insert_product(
+            price_id:$price_id,
+            category_id:$params['category'],
+            usu_id:$params['userId'],
+        );
         unset($params['category']);
 
         $this->insert_images($params['images'], $product_id);
@@ -78,6 +107,32 @@ class Products_model extends CI_Model
         //   },
     }
 
+    public function get_by_user(string $user_id)
+    {
+        $this->db->select('producto.pro_id AS id, producto.pro_visibilidad AS visibility');
+        $this->db->select('precio.prc_valor_total AS price');
+        $this->db->select('(SELECT detalle.dta_valor FROM detalle WHERE detalle.dta_nombre = "Nombre" AND detalle.pro_id = producto.pro_id) AS name');
+        $this->db->select('(SELECT imagen.img_url FROM imagen WHERE imagen.pro_id = producto.pro_id LIMIT 1) AS image');
+        $this->db->join('precio', 'producto.prc_id = precio.prc_id');
+
+        $this->db->where('producto.usu_id', $user_id);
+
+        $query = $this->db->get('producto');
+
+        if ($query->num_rows() === 0)
+        {
+            return [
+                'data'    => FALSE,
+                'message' => 'No se han encontrado productos.',
+            ];
+        }
+
+        return [
+            'data'    => $query->result_array(),
+            'message' => NULL,
+        ];
+    }
+
     private function insert_images(array $images, int $product_id): int | bool
     {
         $batch_data = [];
@@ -120,10 +175,11 @@ class Products_model extends CI_Model
         return $this->run_query('precio', $price);
     }
 
-    private function insert_product(int $price_id, int $category_id): int
+    private function insert_product(int $price_id, int $category_id, int $usu_id): int
     {
         $product = [
             'prc_id' => $price_id,
+            'usu_id' => $usu_id,
             'cat_id' => $category_id,
         ];
 
@@ -132,7 +188,7 @@ class Products_model extends CI_Model
 
     private function run_query(string $table_name, array $data): int
     {
-        $query = $this->db->insert($table_name, $data);
+        $this->db->insert($table_name, $data);
 
         if ($this->db->affected_rows() !== 1)
         {
@@ -141,6 +197,59 @@ class Products_model extends CI_Model
 
         return $this->db->insert_id();
     }
-
-    // Borrar
 }
+
+ // public function get_by_user(string $user_id)
+    // {
+    //     $this->db->select('producto.pro_id AS productId, producto.pro_visibilidad AS productVisibility');
+    //     $this->db->select('detalle.dta_id AS detailId, detalle.dta_nombre AS detailName, detalle.dta_valor AS detailValue');
+    //     $this->db->select('precio.prc_valor_agregado AS addedPrice, precio.prc_valor_total AS totalPrice');
+    //     $this->db->join('detalle', 'producto.pro_id = detalle.pro_id', 'left');
+    //     $this->db->join('precio', 'producto.prc_id = precio.prc_id', 'left');
+    //     $this->db->where('producto.usu_id', $user_id);
+
+    //     $query = $this->db->get('producto');
+
+    //     if ($query->num_rows() === 0)
+    //     {
+    //         return [
+    //             'data'    => FALSE,
+    //             'message' => 'No se han encontrado productos.',
+    //         ];
+    //     }
+
+    //     $data = [];
+
+    //     foreach ($query->result_array() as $result)
+    //     {
+    //         if (array_key_exists($result['productId'], $data))
+    //         {
+    //             $data[$result['productId']]['details'][] = [
+    //                 'detailId'    => $result['detailId'],
+    //                 'detailName'  => $result['detailName'],
+    //                 'detailValue' => $result['detailValue'],
+    //             ];
+
+    //             continue;
+    //         }
+
+    //         $data[$result['productId']] = [
+    //             'productId'         => $result['productId'],
+    //             'productVisibility' => $result['productVisibility'],
+    //             'addedPrice'        => $result['addedPrice'],
+    //             'totalPrice'        => $result['totalPrice'],
+    //             'details'           => [
+    //                 [
+    //                     'detailId'    => $result['detailId'],
+    //                     'detailName'  => $result['detailName'],
+    //                     'detailValue' => $result['detailValue'],
+    //                 ],
+    //             ],
+    //         ];
+    //     }
+
+    //     return [
+    //         'data'    => $data,
+    //         'message' => NULL,
+    //     ];
+    // }

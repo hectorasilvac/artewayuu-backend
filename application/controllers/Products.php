@@ -30,6 +30,36 @@ class Products extends CI_Controller
         exit();
     }
 
+    public function get_by_user()
+    {
+        if ($this->input->method(true) !== 'POST')
+        {
+            echo json_encode([
+                'data' => FALSE, 
+                'message' => 'Método de solicitud no válido.'
+            ]);
+            exit();
+        }
+
+        $valid_user = $this->products_model->check_user(
+            user_id:$this->input->post('id'),
+            user_email:$this->input->post('email'),
+        );
+
+        if ( ! $valid_user['data'])
+        {
+            echo json_encode($valid_user);
+            exit();
+        }
+
+        $get_products = $this->products_model->get_by_user(
+            user_id: $this->input->post('id'),
+        );
+
+        echo json_encode($get_products);
+        exit();
+    }
+
     public function get_by_value(int $value)
     {
         header('Content-type:application/json');
@@ -52,11 +82,11 @@ class Products extends CI_Controller
         exit();
     }
 
-    public function get_all(int|null $limit = 50)
+    public function get_all(int | null $limit = 50)
     {
         $query = $this->products_model->get_all($limit);
 
-        $result['data'] = $query;
+        $result['data']    = $query;
         $result['message'] = NULL;
 
         header('Content-type:application/json');
