@@ -49,22 +49,25 @@ defined('BASEPATH') or exit('No direct script access allowed');
 | Examples:    my-controller/index    -> my_controller/index
 |        my-controller/my-method    -> my_controller/my_method
  */
-$route['login'] = 'login/auth';
 
-$route['users']     = 'users/view';
-$route['users/add'] = 'users/add';
-
-$route['fields/(:num)']     = 'fields/get_by_value/$1';
-$route['categories/(:any)'] = 'categories/$1';
-$route['discounts/(:any)']  = 'discounts/$1';
-
-$route['products/all']        = 'products/get_all';
-$route['products/all/(:num)'] = 'products/get_all/$1';
-$route['products/user']       = 'products/get_by_user';
-
-$route['costs/(:any)']  = 'costs/$1';
-$route['images/(:any)'] = 'images/$1';
-
-$route['default_controller']   = 'welcome';
-$route['404_override']         = '';
-$route['translate_uri_dashes'] = FALSE;
+$route['login']                    = 'login/auth';
+$route['users']                    = 'users/view';
+$route['users/add']                = 'users/add';
+$route['fields/(:num)']            = 'fields/get_by_value/$1';
+$route['categories/(:num)']        = 'categories/$1';
+$route['discounts/(:any)']         = 'discounts/$1';
+$route['company']                  = 'company/get_by_id';
+$route['company/edit']             = 'company/edit';
+$route['company/detail']           = 'company/get_detail';
+$route['company/socialmedia']      = 'company/get_social_media';
+$route['company/socialmedia/edit'] = 'company/edit_social_media';
+$route['company/category']         = 'company/get_by_category';
+$route['products/all']             = 'products/get_all';
+$route['products/all/(:num)']      = 'products/get_all/$1';
+$route['products/user']            = 'products/get_by_user';
+$route['products/get']             = 'products/get_by_id';
+$route['costs/(:any)']             = 'costs/$1';
+$route['images/(:any)']            = 'images/$1';
+$route['default_controller']       = 'welcome';
+$route['404_override']             = '';
+$route['translate_uri_dashes']     = FALSE;

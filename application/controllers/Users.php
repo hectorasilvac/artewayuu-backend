@@ -28,7 +28,7 @@ class Users extends CI_Controller
             exit();
         }
 
-        $rules = $this->entry_rules($this->input->post('rolId'));
+        $rules = $this->add_rules((int)$this->input->post('rolId'));
 
         $this->form_validation->set_rules($rules);
 
@@ -40,8 +40,8 @@ class Users extends CI_Controller
 
         if ( (int)$this->input->post('rolId') === self::CLIENT)
         {
-            // $this->users_model->add_client();
-            // exit();
+            echo json_encode($this->users_model->add_client());
+            exit();
         }
         elseif ( (int)$this->input->post('rolId') === self::ENTREPRENEUR)
         {
@@ -58,7 +58,7 @@ class Users extends CI_Controller
         print_r($this->users_model->get_all());
     }
 
-    private function entry_rules(int $rol_id): array
+    private function add_rules(int $rol_id): array
     {
         $all_validations = [
             [

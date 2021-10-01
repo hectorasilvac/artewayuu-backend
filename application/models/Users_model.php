@@ -37,7 +37,7 @@ class Users_model extends CI_Model
         ];
     }
 
-    public function add_user(int $inf_id, int $ubi_id, int $rol_id): array
+    public function add_user(int $inf_id, ?int $ubi_id = NULL, int $rol_id): array
     {
         $data = [
             'inf_id' => $inf_id,
@@ -108,12 +108,50 @@ class Users_model extends CI_Model
         exit();
     }
 
+    public function add_client(): array
+    {
+        $this->db->trans_start();
+        $create_info     = $this->add_info();
+        $create_user     = $this->add_user(
+            inf_id:$create_info['id'],
+            rol_id:(int) $this->input->post('rolId')
+        );
+
+        $this->db->trans_complete();
+
+        if ($this->db->trans_status() === FALSE)
+        {
+            return [
+                'data'    => FALSE,
+                'message' => 'Las transacciones no se han ejecutado correctamente.',
+            ];
+            exit();
+        }
+
+        $user_info = $this->session_info($create_user['id']);
+
+        if (count($user_info) === 0)
+        {
+            return [
+                'data'    => FALSE,
+                'message' => 'No se ha encontrado información del usuario.',
+            ];
+            exit();
+        }
+
+        return [
+            'data'    => $user_info,
+            'message' => 'Cuenta creada exitosamente.',
+        ];
+        exit();
+    }
+
     public function session_info(int $user_id): bool|array
     {
-        $this->db->select('usuario.usu_id AS id, usuario.rol_id AS rol');
+        $this->db->select('usuario.usu_id AS id, usuario.rol_id AS role');
         $this->db->select('informacionpersonal.inf_nombre AS name, informacionpersonal.inf_apellido AS lastName, informacionpersonal.inf_correo AS email');
-        $this->db->select('empresa.emp_nombre AS companyName, empresa.emp_nombre AS companyName, empresa.emp_logo AS logo');
-        $this->db->select('rol.rol_valor AS rolValue');
+        $this->db->select('empresa.emp_id AS companyId, empresa.emp_nombre AS companyName, empresa.emp_nombre AS companyName, empresa.emp_logo AS companyLogo');
+        $this->db->select('rol.rol_valor AS roleValue');
         $this->db->join('informacionpersonal', 'usuario.inf_id = informacionpersonal.inf_id', 'left');
         $this->db->join('empresa', 'usuario.usu_id = empresa.usu_id', 'left');
         $this->db->join('rol', 'usuario.rol_id = rol.rol_id', 'left');

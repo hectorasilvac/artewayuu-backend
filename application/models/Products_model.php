@@ -19,22 +19,25 @@ class Products_model extends CI_Model
         if ($query->num_rows() === 0)
         {
             return [
-                'data' => FALSE, 
-                'message' => 'Usuario no válido.'
+                'data'    => FALSE,
+                'message' => 'Usuario no válido.',
             ];
             exit();
         }
 
         return [
-            'data' => TRUE, 
-            'message' => 'Usuario válido.'
+            'data'    => TRUE,
+            'message' => 'Usuario válido.',
         ];
         exit();
     }
 
     public function add(array $params)
     {
-        unset($params['Descuentos']);
+        $user_id = $params['user'];
+        unset($params['user']);
+
+        unset($params['discounts']); // TODO: Incluir lógica
 
         $price_id = NULL;
 
@@ -47,11 +50,12 @@ class Products_model extends CI_Model
         $product_id = $this->insert_product(
             price_id:$price_id,
             category_id:$params['category'],
-            usu_id:$params['userId'],
+            usu_id:$user_id,
         );
         unset($params['category']);
 
         $this->insert_images($params['images'], $product_id);
+
         unset($params['images']);
 
         $data = [];
@@ -63,22 +67,37 @@ class Products_model extends CI_Model
                 foreach ($value as $item)
                 {
                     $data[] = [
-                        'dta_nombre' => $key,
-                        'dta_valor'  => $item,
-                        'pro_id'     => $product_id,
+                        'car_etiqueta' => $key,
+                        'dta_valor'    => $item,
+                        'pro_id'       => $product_id,
                     ];
                 }
                 continue;
             }
 
             $data[] = [
-                'dta_nombre' => $key,
-                'dta_valor'  => $value,
-                'pro_id'     => $product_id,
+                'car_etiqueta' => $key,
+                'dta_valor'    => $value,
+                'pro_id'       => $product_id,
             ];
         }
 
-        return $this->db->insert_batch('detalle', $data);
+        $query = $this->db->insert_batch('detalle', $data);
+
+        if ($query === FALSE)
+        {
+            return [
+                'data'    => FALSE,
+                'message' => 'Error al agregar producto.',
+            ];
+            exit();
+        }
+
+        return [
+            'data'    => TRUE,
+            'message' => 'Producto agregado correctamente.',
+        ];
+        exit();
     }
 
     public function get_all(int $limit)
@@ -107,11 +126,107 @@ class Products_model extends CI_Model
         //   },
     }
 
+    public function get_by_id(string $id): array
+    {
+        $data = [];
+
+        $this->db->select('dta_id AS id, LOWER("feature") AS name, caracteristica.car_nombre AS label, dta_valor AS value');
+        $this->db->join('caracteristica', 'detalle.car_etiqueta = caracteristica.car_etiqueta');
+        $this->db->where('detalle.pro_id', $id);
+        $get_features = $this->db->get('detalle');
+
+        if ($get_features->num_rows() > 0)
+        {
+            $data[] = [
+                'title' => 'Características',
+                'key' => 'features',
+                'data'  => $get_features->result_array(),
+            ];
+        }
+
+        $this->db->select('des_id AS id, LOWER("discount") AS name, des_cantidad_minima AS min, des_cantidad_maxima AS max, des_porcentaje AS percentage');
+        $this->db->where('pro_id', $id);
+        $get_discounts = $this->db->get('descuento');
+
+        if ($get_discounts->num_rows() > 0)
+        {
+            $data[] = [
+                'title' => 'Descuentos',
+                'key' => 'discounts',
+                'data'  => $get_discounts->result_array(),
+            ];
+        }
+
+        $this->db->select('precio.prc_id AS id, LOWER("price") AS name, prc_valor_agregado AS addedValue, prc_valor_total AS totalCost');
+        $this->db->join('producto', 'precio.prc_id = producto.prc_id');
+        $this->db->where('producto.pro_id', $id);
+        $get_discounts = $this->db->get('precio');
+
+        if ($get_discounts->num_rows() > 0)
+        {
+            $data[] = [
+                'title' => 'Precio',
+                'key' => 'prices',
+                'data'  => $get_discounts->result_array(),
+            ];
+        }
+
+        $this->db->select('img_id AS id, img_url AS url, LOWER("image") AS name');
+        $this->db->where('pro_id', $id);
+        $get_images = $this->db->get('imagen');
+
+        if ($get_images->num_rows() > 0)
+        {
+            $data[] = [
+                'title' => 'Imágenes',
+                'key' => 'images',
+                'data'  => $get_images->result_array(),
+            ];
+        }
+
+        if (count($data) === 0)
+        {
+            return [
+                'data'    => FALSE,
+                'message' => 'Producto no encontrado.',
+            ];
+            exit();
+        }
+
+        return [
+            'data'    => $data,
+            'message' => NULL,
+        ];
+        exit();
+
+        // const DATA = [
+        //       {
+        //       title: 'Preguntas',
+        //       data: [
+        //         {
+        //           id: '1',
+        //           name: 'question',
+        //           question: '¿A como sale el envío para Bucaramanga?',
+        //           questionDate: '2020-05-05 20:07',
+        //           answer: 'Aproximadamente entre $10.000 y $14.000',
+        //           answerDate: '2020-05-05 22:45',
+        //         },
+        //         {
+        //           id: '1',
+        //           name: 'question',
+        //           question: '¿Acepta transferencia bancaria?',
+        //           questionDate: '2020-05-08 06:14',
+        //         }
+        //       ],
+        //     },
+        //   ];
+    }
+
     public function get_by_user(string $user_id)
     {
         $this->db->select('producto.pro_id AS id, producto.pro_visibilidad AS visibility');
         $this->db->select('precio.prc_valor_total AS price');
-        $this->db->select('(SELECT detalle.dta_valor FROM detalle WHERE detalle.dta_nombre = "Nombre" AND detalle.pro_id = producto.pro_id) AS name');
+        $this->db->select('(SELECT detalle.dta_valor FROM detalle WHERE detalle.car_etiqueta = "name" AND detalle.pro_id = producto.pro_id) AS name');
         $this->db->select('(SELECT imagen.img_url FROM imagen WHERE imagen.pro_id = producto.pro_id LIMIT 1) AS image');
         $this->db->join('precio', 'producto.prc_id = precio.prc_id');
 
@@ -139,7 +254,7 @@ class Products_model extends CI_Model
 
         foreach ($images as $data)
         {
-            if (empty($data))
+            if (empty($data) || strlen($data['uri']) === 0)
             {
                 continue;
             }
@@ -168,8 +283,8 @@ class Products_model extends CI_Model
     private function insert_price(array $data): int
     {
         $price = [
-            'prc_valor_agregado' => $data['Valor agregado'],
-            'prc_valor_total'    => $data['Valor total'],
+            'prc_valor_agregado' => $data['addedValue'],
+            'prc_valor_total'    => $data['totalCost'],
         ];
 
         return $this->run_query('precio', $price);
@@ -199,57 +314,57 @@ class Products_model extends CI_Model
     }
 }
 
- // public function get_by_user(string $user_id)
-    // {
-    //     $this->db->select('producto.pro_id AS productId, producto.pro_visibilidad AS productVisibility');
-    //     $this->db->select('detalle.dta_id AS detailId, detalle.dta_nombre AS detailName, detalle.dta_valor AS detailValue');
-    //     $this->db->select('precio.prc_valor_agregado AS addedPrice, precio.prc_valor_total AS totalPrice');
-    //     $this->db->join('detalle', 'producto.pro_id = detalle.pro_id', 'left');
-    //     $this->db->join('precio', 'producto.prc_id = precio.prc_id', 'left');
-    //     $this->db->where('producto.usu_id', $user_id);
+// public function get_by_user(string $user_id)
+// {
+//     $this->db->select('producto.pro_id AS productId, producto.pro_visibilidad AS productVisibility');
+//     $this->db->select('detalle.dta_id AS detailId, detalle.dta_nombre AS detailName, detalle.dta_valor AS detailValue');
+//     $this->db->select('precio.prc_valor_agregado AS addedPrice, precio.prc_valor_total AS totalPrice');
+//     $this->db->join('detalle', 'producto.pro_id = detalle.pro_id', 'left');
+//     $this->db->join('precio', 'producto.prc_id = precio.prc_id', 'left');
+//     $this->db->where('producto.usu_id', $user_id);
 
-    //     $query = $this->db->get('producto');
+//     $query = $this->db->get('producto');
 
-    //     if ($query->num_rows() === 0)
-    //     {
-    //         return [
-    //             'data'    => FALSE,
-    //             'message' => 'No se han encontrado productos.',
-    //         ];
-    //     }
+//     if ($query->num_rows() === 0)
+//     {
+//         return [
+//             'data'    => FALSE,
+//             'message' => 'No se han encontrado productos.',
+//         ];
+//     }
 
-    //     $data = [];
+//     $data = [];
 
-    //     foreach ($query->result_array() as $result)
-    //     {
-    //         if (array_key_exists($result['productId'], $data))
-    //         {
-    //             $data[$result['productId']]['details'][] = [
-    //                 'detailId'    => $result['detailId'],
-    //                 'detailName'  => $result['detailName'],
-    //                 'detailValue' => $result['detailValue'],
-    //             ];
+//     foreach ($query->result_array() as $result)
+//     {
+//         if (array_key_exists($result['productId'], $data))
+//         {
+//             $data[$result['productId']]['details'][] = [
+//                 'detailId'    => $result['detailId'],
+//                 'detailName'  => $result['detailName'],
+//                 'detailValue' => $result['detailValue'],
+//             ];
 
-    //             continue;
-    //         }
+//             continue;
+//         }
 
-    //         $data[$result['productId']] = [
-    //             'productId'         => $result['productId'],
-    //             'productVisibility' => $result['productVisibility'],
-    //             'addedPrice'        => $result['addedPrice'],
-    //             'totalPrice'        => $result['totalPrice'],
-    //             'details'           => [
-    //                 [
-    //                     'detailId'    => $result['detailId'],
-    //                     'detailName'  => $result['detailName'],
-    //                     'detailValue' => $result['detailValue'],
-    //                 ],
-    //             ],
-    //         ];
-    //     }
+//         $data[$result['productId']] = [
+//             'productId'         => $result['productId'],
+//             'productVisibility' => $result['productVisibility'],
+//             'addedPrice'        => $result['addedPrice'],
+//             'totalPrice'        => $result['totalPrice'],
+//             'details'           => [
+//                 [
+//                     'detailId'    => $result['detailId'],
+//                     'detailName'  => $result['detailName'],
+//                     'detailValue' => $result['detailValue'],
+//                 ],
+//             ],
+//         ];
+//     }
 
-    //     return [
-    //         'data'    => $data,
-    //         'message' => NULL,
-    //     ];
-    // }
+//     return [
+//         'data'    => $data,
+//         'message' => NULL,
+//     ];
+// }

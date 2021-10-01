@@ -1,4 +1,5 @@
 <?php
+defined('BASEPATH') or exit('No direct script access allowed');
 
 class Products extends CI_Controller
 {
@@ -20,13 +21,7 @@ class Products extends CI_Controller
 
         $query = $this->products_model->add($params);
 
-        if ( ! $query)
-        {
-            echo json_encode(['data' => FALSE, 'message' => 'Error al agregar producto.']);
-            exit();
-        }
-
-        echo json_encode(['data' => TRUE, 'message' => 'Producto agregado correctamente.']);
+        echo json_encode($query);
         exit();
     }
 
@@ -57,6 +52,25 @@ class Products extends CI_Controller
         );
 
         echo json_encode($get_products);
+        exit();
+    }
+
+    public function get_by_id(): void
+    {
+        if ($this->input->method(true) !== 'POST')
+        {
+            echo json_encode([
+                'data' => FALSE, 
+                'message' => 'Método de solicitud no válido.'
+            ]);
+            exit();
+        }
+
+        $query = $this->products_model->get_by_id(
+            id: $this->input->post('id'),
+        );
+
+        echo json_encode($query);
         exit();
     }
 
