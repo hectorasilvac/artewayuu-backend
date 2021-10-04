@@ -222,7 +222,7 @@ class Products_model extends CI_Model
         //   ];
     }
 
-    public function get_by_user(string $user_id)
+    public function get_by_user(string $user_id): array
     {
         $this->db->select('producto.pro_id AS id, producto.pro_visibilidad AS visibility');
         $this->db->select('precio.prc_valor_total AS price');
@@ -313,58 +313,3 @@ class Products_model extends CI_Model
         return $this->db->insert_id();
     }
 }
-
-// public function get_by_user(string $user_id)
-// {
-//     $this->db->select('producto.pro_id AS productId, producto.pro_visibilidad AS productVisibility');
-//     $this->db->select('detalle.dta_id AS detailId, detalle.dta_nombre AS detailName, detalle.dta_valor AS detailValue');
-//     $this->db->select('precio.prc_valor_agregado AS addedPrice, precio.prc_valor_total AS totalPrice');
-//     $this->db->join('detalle', 'producto.pro_id = detalle.pro_id', 'left');
-//     $this->db->join('precio', 'producto.prc_id = precio.prc_id', 'left');
-//     $this->db->where('producto.usu_id', $user_id);
-
-//     $query = $this->db->get('producto');
-
-//     if ($query->num_rows() === 0)
-//     {
-//         return [
-//             'data'    => FALSE,
-//             'message' => 'No se han encontrado productos.',
-//         ];
-//     }
-
-//     $data = [];
-
-//     foreach ($query->result_array() as $result)
-//     {
-//         if (array_key_exists($result['productId'], $data))
-//         {
-//             $data[$result['productId']]['details'][] = [
-//                 'detailId'    => $result['detailId'],
-//                 'detailName'  => $result['detailName'],
-//                 'detailValue' => $result['detailValue'],
-//             ];
-
-//             continue;
-//         }
-
-//         $data[$result['productId']] = [
-//             'productId'         => $result['productId'],
-//             'productVisibility' => $result['productVisibility'],
-//             'addedPrice'        => $result['addedPrice'],
-//             'totalPrice'        => $result['totalPrice'],
-//             'details'           => [
-//                 [
-//                     'detailId'    => $result['detailId'],
-//                     'detailName'  => $result['detailName'],
-//                     'detailValue' => $result['detailValue'],
-//                 ],
-//             ],
-//         ];
-//     }
-
-//     return [
-//         'data'    => $data,
-//         'message' => NULL,
-//     ];
-// }

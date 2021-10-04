@@ -151,28 +151,56 @@ class Company_model extends CI_Model
 
     public function get_detail(int $company_id): array
     {
-        $this->db->select('empresa.emp_id AS id, emp_nombre AS name, emp_logo AS logo');
-        $this->db->select('inf_nombre AS owner, CONCAT(ubi_direccion, ubi_ciudad, ubi_departamento) AS address, inf_correo AS email, inf_celular AS phone');
+        $this->db->select('empresa.emp_id AS id, emp_nombre AS name, emp_logo AS logo, emp_descripcion AS description, emp_eslogan AS slogan');
+        $this->db->select('CONCAT(inf_nombre, " ", inf_apellido) AS owner, CONCAT(ubi_direccion, ", ", ubi_ciudad, ", ", ubi_departamento) AS address, inf_correo AS email, inf_celular AS phone');
         $this->db->select('red_facebook AS facebook, red_twitter AS twitter, red_youtube AS youtube');
         $this->db->join('usuario', 'empresa.usu_id = usuario.usu_id', 'left');
         $this->db->join('informacionpersonal', 'usuario.inf_id = informacionpersonal.inf_id', 'left');
         $this->db->join('ubicacion', 'usuario.ubi_id = ubicacion.ubi_id', 'left');
         $this->db->join('redsocial', 'empresa.emp_id = redsocial.emp_id', 'left');
         $this->db->where('empresa.emp_id', $company_id);
+        $get_detail = $this->db->get('empresa');
 
-        $query = $this->db->get('empresa');
-
-        if ($query->num_rows() === 0)
+        if ($get_detail->num_rows() === 0)
         {
-            return [
-                'data'    => FALSE,
-                'message' => 'No se han encontrado información de esta empresa',
-            ];
-            exit();
+           $get_detail = 'No se ha encontrado información de esta empresa';
+        }
+        else
+        {
+            $get_detail = $get_detail->row_array();
+        }
+
+        $this->db->select('producto.pro_id AS id, producto.pro_visibilidad AS visibility,precio.prc_valor_total AS price');
+        $this->db->select('(SELECT detalle.dta_valor FROM detalle WHERE detalle.car_etiqueta = "name" AND detalle.pro_id = producto.pro_id) AS name');
+        $this->db->select('(SELECT imagen.img_url FROM imagen WHERE imagen.pro_id = producto.pro_id LIMIT 1) AS image');
+        $this->db->select('(SELECT categoria.cat_nombre FROM categoria WHERE categoria.cat_id = producto.cat_id ) AS categoryName');
+        $this->db->join('precio', 'producto.prc_id = precio.prc_id', 'left');
+        $this->db->join('empresa', 'producto.usu_id = empresa.usu_id', 'left');
+        $this->db->where('empresa.emp_id', $company_id);
+        $get_products = $this->db->get('producto');
+
+        
+        if ($get_products->num_rows() === 0)
+        {
+           $get_products = 'No hay productos publicados por esta empresa';
+        }
+        else
+        {
+            $get_products = $get_products->result_array();
+        }
+        
+        $organized_products = [];
+
+        foreach ($get_products as $info)
+        {
+            $organized_products[$info['categoryName']][] = $info;
         }
 
         return [
-            'data'    => $query->row_array(),
+            'data'    => [
+                'info' => $get_detail,
+                'products' => $organized_products,
+            ],
             'message' => NULL,
         ];  
     }
