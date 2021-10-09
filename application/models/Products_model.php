@@ -131,7 +131,7 @@ class Products_model extends CI_Model
         $data = [];
 
         $this->db->select('dta_id AS id, LOWER("feature") AS name, caracteristica.car_nombre AS label, dta_valor AS value');
-        $this->db->join('caracteristica', 'detalle.car_etiqueta = caracteristica.car_etiqueta');
+        $this->db->join('caracteristica', 'detalle.car_etiqueta = caracteristica.car_etiqueta', 'left');
         $this->db->where('detalle.pro_id', $id);
         $get_features = $this->db->get('detalle');
 
@@ -143,6 +143,20 @@ class Products_model extends CI_Model
                 'data'  => $get_features->result_array(),
             ];
         }
+
+        $this->db->select('usu_id AS id');
+        $this->db->where('pro_id', $id);
+        $get_user_id = $this->db->get('producto');
+
+        if ($get_user_id->num_rows() > 0)
+        {
+            $data[] = [
+                'title' => 'Vendedor',
+                'key' => 'seller',
+                'data'  => $get_user_id->row_array(),
+            ];
+        }
+
 
         $this->db->select('des_id AS id, LOWER("discount") AS name, des_cantidad_minima AS min, des_cantidad_maxima AS max, des_porcentaje AS percentage');
         $this->db->where('pro_id', $id);

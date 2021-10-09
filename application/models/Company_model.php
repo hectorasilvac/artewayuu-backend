@@ -199,9 +199,10 @@ class Company_model extends CI_Model
         return [
             'data'    => [
                 'info' => $get_detail,
-                'products' => $organized_products,
+                'products' => array_values($organized_products),
             ],
             'message' => NULL,
-        ];  
+        ]; 
+        exit();
     }
 }
