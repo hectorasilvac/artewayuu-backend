@@ -7,75 +7,98 @@ class Purchases extends CI_Controller
     {
         parent::__construct();
         $this->load->model('purchases_model');
-        $this->load->helper('utility');
     }
 
-    public function info()
+    public function show_info(string $product_id, string $user_id)
     {        
-        $methods = [
-            'GET' => function() {
-                return $this->show_info();
-            }
-        ];
-
-        $valid_method = http_method_exists($methods, $this->input->method(TRUE));
-
-        echo json_encode(result($methods, $this->input->method(TRUE), $valid_method));
-    }
-
-    public function show_info(): array
-    {
         $result = $this->purchases_model->show_info(
-            product_id: $this->input->get('productId'),
-            user_id: $this->input->get('userId'),
+            product_id: filter_var($product_id, FILTER_SANITIZE_STRING),
+            user_id: filter_var($user_id, FILTER_SANITIZE_STRING)
         );
 
-       return $result;
-    }
-
-    public function order()
-    {
-        $methods = [
-            'GET' => function() {
-                return $this->show_order();
-            },
-            'POST' => function() {
-                return $this->add_order();
-            },
-            'PUT' => function() {
-                return $this->update_order();
-            },
-            'DELETE' => function() {
-                return $this->delete_order();
-            },
-        ];
-
-        $valid_method = http_method_exists($methods, $this->input->method(TRUE));
-
-        echo json_encode(result($methods, $this->input->method(TRUE), $valid_method));
-    }
-
-    public function show_order()
-    {
-       return [
-           'Show Order'
-       ];
+       echo json_encode($result);
+       exit();
     }
 
     public function add_order()
     {
-       return [
-           'Add order'
-        ];
+        $result = $this->purchases_model->add_order(
+            address: $this->input->post('address'),
+            buyer_id: $this->input->post('buyerId'),
+            payment_method: $this->input->post('payment'),
+            seller_id: $this->input->post('sellerId'),
+            total: $this->input->post('total'),
+            products: json_decode($this->input->post('products'), TRUE),
+        );
+
+       echo json_encode($result);
+       exit();
     }
 
-    public function update_order()
+    public function show_order(string $user_id)
     {
-       return 'Update order';
+        $result = $this->purchases_model->show_order(
+            user_id: filter_var($user_id, FILTER_SANITIZE_STRING),
+        );
+
+       echo json_encode($result);
+       exit();
     }
 
-    public function delete_order()
+    public function show_order_detail(string $order_id)
     {
-       return 'Delete order';
+        $result = $this->purchases_model->show_order_detail(
+            order_id: filter_var($order_id, FILTER_SANITIZE_STRING),
+        );
+
+       echo json_encode($result);
+       exit();
+    }
+
+    public function show_traceability(string $order_id)
+    {
+        $result = $this->purchases_model->show_traceability(
+            order_id: filter_var($order_id, FILTER_SANITIZE_STRING),
+        );
+
+       echo json_encode($result);
+       exit();
+    }
+
+    public function insert_traceability()
+    {
+        $image = json_decode($this->input->post('image'), TRUE);
+        $insert_image = $this->purchases_model->insert_voucher(
+            order_id: $this->input->post('orderId'),
+            uri: $image['uri'],
+            base64: $image['base64'],
+        );
+
+        if ( ! $insert_image['data'])
+        {
+            echo json_encode($insert_image);
+            exit();
+        }
+
+        $result = $this->purchases_model->insert_traceability(
+            user_id: $this->input->post('userId'),
+            order_id: $this->input->post('orderId'),
+            status_id: $this->input->post('statusId'),
+            url_attached: $insert_image['data'],
+            comment: $this->input->post('comment'),
+        );
+
+       echo json_encode($result);
+       exit();
+    }
+
+    public function show_status(string $role_value)
+    {
+        $result = $this->purchases_model->show_status(
+            role_value: filter_var($role_value, FILTER_SANITIZE_STRING),
+        );
+
+       echo json_encode($result);
+       exit();
     }
 }
