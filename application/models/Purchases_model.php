@@ -2,6 +2,9 @@
 
 class Purchases_model extends CI_Model
 {
+    CONST ENTREPRENEUR = 2;
+    CONST CUSTOMER     = 1;
+
     public function __construct()
     {
         $this->load->helper('url');
@@ -13,6 +16,7 @@ class Purchases_model extends CI_Model
         string $payment_method,
         string $seller_id,
         string $total,
+        string $total_profit,
         array $products
     ): array
     {
@@ -31,6 +35,7 @@ class Purchases_model extends CI_Model
             'ord_metodo_pago' => $payment_method,
             'vendido_por'     => $seller_id,
             'ord_total'       => $total,
+            'ord_ganancia'    => $total_profit,
             'ord_creado'      => date('Y-m-d H:i:s'),
             'env_id'          => $shipping_id,
         ];
@@ -118,11 +123,33 @@ class Purchases_model extends CI_Model
         exit();
     }
 
-    public function show_order(string $user_id): array
+    public function show_order(
+        string $user_id,
+        int $role_id,
+        bool $completed,
+    ): array
     {
         $this->db->select('ord_id AS id, ord_total AS total, DATE_FORMAT(ord_creado, "%b %d %Y") AS date');
-        $this->db->where('comprado_por', $user_id);
         $this->db->order_by('id', 'DESC');
+
+        if ($role_id === self::CUSTOMER)
+        {
+            $this->db->where('comprado_por', $user_id);
+        }
+        else
+        {
+            $this->db->where('vendido_por', $user_id);
+            $this->db->select('ord_ganancia AS profit');
+        }
+
+        if ($completed)
+        {
+            $this->db->where('est_id', '5');
+        }
+        else
+        {
+            $this->db->where('est_id !=', '5');
+        }
 
         $query = $this->db->get('orden');
 
@@ -144,14 +171,15 @@ class Purchases_model extends CI_Model
 
     public function show_order_detail(string $order_id)
     {
-        $this->db->select('ord_id AS id, CONCAT(comprador.inf_nombre, " ", comprador.inf_apellido) AS buyer, CONCAT(vendedor.inf_nombre, " ", vendedor.inf_apellido) AS seller');
-        $this->db->select('DATE_FORMAT(ord_creado, "%d %b %y %h:%i") AS date, ord_total AS total, estado.est_nombre AS status, env_origen AS origin, env_destino AS destination, env_fecha_envio AS shipmentDate, env_guia AS guideNumber');
+        $this->db->select('ord_id AS id, CONCAT(comprador.inf_nombre, " ", comprador.inf_apellido) AS buyer, CONCAT(vendedor.inf_nombre, " ", vendedor.inf_apellido) AS seller, ord_ganancia AS profit');
+        $this->db->select('DATE_FORMAT(ord_creado, "%d %b %y %h:%i") AS date, ord_total AS total, env_origen AS origin, env_destino AS destination, env_fecha_envio AS shipmentDate, env_guia AS guideNumber');
         $this->db->select('env_nombre_transportadora AS carrierName, env_fecha_entrega AS deliveryDate');
+        $this->db->select("(SELECT estado.est_nombre FROM trazabilidad LEFT JOIN estado ON trazabilidad.est_id = estado.est_id WHERE trazabilidad.ord_id = {$order_id} ORDER BY trazabilidad.creado_en DESC LIMIT 1) AS status");
+        $this->db->select("(SELECT estado.est_id FROM trazabilidad LEFT JOIN estado ON trazabilidad.est_id = estado.est_id WHERE trazabilidad.ord_id = {$order_id} ORDER BY trazabilidad.creado_en DESC LIMIT 1) AS statusId");
         $this->db->join('usuario', 'orden.comprado_por = usuario.usu_id');
         $this->db->join('informacionpersonal comprador', 'usuario.inf_id = comprador.inf_id', 'left');
         $this->db->join('usuario usuvendedor', 'orden.vendido_por = usuvendedor.usu_id', 'left');
         $this->db->join('informacionpersonal vendedor', 'usuvendedor.inf_id = vendedor.inf_id', 'left');
-        $this->db->join('estado', 'orden.est_id = estado.est_id', 'left');
         $this->db->join('envio', 'orden.env_id = envio.env_id', 'left');
         $this->db->where('orden.ord_id', $order_id);
         $query = $this->db->get('orden');
@@ -166,7 +194,7 @@ class Purchases_model extends CI_Model
         }
 
         $data     = [];
-        $detail   = ['id', 'buyer', 'seller', 'date', 'total', 'status'];
+        $detail   = ['id', 'buyer', 'seller', 'date', 'total', 'status', 'statusId', 'profit'];
         $shipping = ['origin', 'destination', 'shipmentDate', 'guideNumber', 'carrierName', 'deliveryDate'];
 
         foreach ($query->row_array() as $key => $value)
@@ -279,6 +307,22 @@ class Purchases_model extends CI_Model
             return [
                 'data'    => FALSE,
                 'message' => 'Error al registrar trazabilidad.',
+            ];
+            exit();
+        }
+
+        $update_order = [
+            'est_id' => $status_id,
+        ];
+
+        $this->db->where('ord_id', $order_id);
+        $result_update = $this->db->update('orden', $update_order);
+
+        if ($result_update === FALSE)
+        {
+            return [
+                'data'    => FALSE,
+                'message' => 'Error al actualizar estado de la orden.',
             ];
             exit();
         }

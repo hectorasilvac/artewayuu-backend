@@ -28,6 +28,7 @@ class Purchases extends CI_Controller
             payment_method: $this->input->post('payment'),
             seller_id: $this->input->post('sellerId'),
             total: $this->input->post('total'),
+            total_profit: $this->input->post('totalProfit'),
             products: json_decode($this->input->post('products'), TRUE),
         );
 
@@ -35,10 +36,19 @@ class Purchases extends CI_Controller
        exit();
     }
 
-    public function show_order(string $user_id)
+    public function show_order()
     {
+        $completed = FALSE;
+
+        if ($this->input->post('status') === '1')
+        {
+            $completed = TRUE;
+        }
+
         $result = $this->purchases_model->show_order(
-            user_id: filter_var($user_id, FILTER_SANITIZE_STRING),
+            user_id: $this->input->post('userId'),
+            role_id: (int)$this->input->post('roleId'),
+            completed: $completed,
         );
 
        echo json_encode($result);
