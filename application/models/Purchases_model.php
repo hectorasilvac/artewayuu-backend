@@ -379,7 +379,8 @@ class Purchases_model extends CI_Model
 
     private function insert_order_detail(int $order_id, array $products): array
     {
-        $data = [];
+        $data          = [];
+        $products_data = [];
 
         foreach ($products as $value)
         {
@@ -391,6 +392,43 @@ class Purchases_model extends CI_Model
                 'pro_id'              => $value['id'],
                 'ord_id'              => $order_id,
             ];
+
+            $products_data[$value['id']] = $value['quantity'];
+        }
+
+        $this->db->select('pro_id, dta_id, dta_valor');
+        $this->db->where('car_etiqueta', 'quantity');
+        $this->db->where_in('detalle.pro_id', array_keys($products_data));
+        $current_quantity = $this->db->get('detalle');
+
+        if ($current_quantity->num_rows() === 0)
+        {
+            return [
+                'data'    => FALSE,
+                'message' => 'No se ha podido recuperar las unidades en stock.',
+            ];
+            exit();
+        }
+
+        $arr_current_quantity = $current_quantity->result_array();
+
+        foreach ($arr_current_quantity as $key => $value)
+        {
+            if (isset($products_data[$value['pro_id']]))
+            {
+                $arr_current_quantity[$key]['dta_valor'] = $arr_current_quantity[$key]['dta_valor'] - $products_data[$value['pro_id']];
+            }
+        }
+
+        $updated_quantity = $this->db->update_batch('detalle', $arr_current_quantity, 'dta_id');
+
+        if ($updated_quantity === FALSE)
+        {
+            return [
+                'data'    => FALSE,
+                'message' => 'No se ha podido actualizar las unidades en stock.',
+            ];
+            exit();
         }
 
         $result = $this->db->insert_batch('detalleorden', $data);

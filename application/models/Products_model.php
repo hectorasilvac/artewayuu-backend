@@ -212,28 +212,6 @@ class Products_model extends CI_Model
             'message' => NULL,
         ];
         exit();
-
-        // const DATA = [
-        //       {
-        //       title: 'Preguntas',
-        //       data: [
-        //         {
-        //           id: '1',
-        //           name: 'question',
-        //           question: '¿A como sale el envío para Bucaramanga?',
-        //           questionDate: '2020-05-05 20:07',
-        //           answer: 'Aproximadamente entre $10.000 y $14.000',
-        //           answerDate: '2020-05-05 22:45',
-        //         },
-        //         {
-        //           id: '1',
-        //           name: 'question',
-        //           question: '¿Acepta transferencia bancaria?',
-        //           questionDate: '2020-05-08 06:14',
-        //         }
-        //       ],
-        //     },
-        //   ];
     }
 
     public function get_by_user(string $user_id): array
