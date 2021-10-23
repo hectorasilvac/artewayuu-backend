@@ -125,8 +125,8 @@ class Purchases_model extends CI_Model
 
     public function show_order(
         string $user_id,
+        string $completed,
         int $role_id,
-        bool $completed,
     ): array
     {
         $this->db->select('ord_id AS id, ord_total AS total, DATE_FORMAT(ord_creado, "%b %d %Y") AS date');
@@ -142,7 +142,7 @@ class Purchases_model extends CI_Model
             $this->db->select('ord_ganancia AS profit');
         }
 
-        if ($completed)
+        if ($completed === 'true')
         {
             $this->db->where('est_id', '5');
         }
@@ -215,6 +215,7 @@ class Purchases_model extends CI_Model
         $this->db->select('det_id AS id, det_nombre_producto AS name, det_costo_unitario AS unitValue, det_cantidad AS quantity, det_subtotal AS totalValue, detalleorden.pro_id AS productId, imagen.img_url AS image');
         $this->db->join('imagen', 'detalleorden.pro_id = imagen.pro_id', 'left');
         $this->db->where('detalleorden.ord_id', $order_id);
+        $this->db->group_by('detalleorden.det_id');
         $get_order_detail = $this->db->get('detalleorden');
 
         if ($get_order_detail->num_rows() === 0)

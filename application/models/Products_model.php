@@ -139,7 +139,7 @@ class Products_model extends CI_Model
         {
             $data[] = [
                 'title' => 'Características',
-                'key' => 'features',
+                'key'   => 'features',
                 'data'  => $get_features->result_array(),
             ];
         }
@@ -152,11 +152,10 @@ class Products_model extends CI_Model
         {
             $data[] = [
                 'title' => 'Vendedor',
-                'key' => 'seller',
+                'key'   => 'seller',
                 'data'  => $get_user_id->row_array(),
             ];
         }
-
 
         $this->db->select('des_id AS id, LOWER("discount") AS name, des_cantidad_minima AS min, des_cantidad_maxima AS max, des_porcentaje AS percentage');
         $this->db->where('pro_id', $id);
@@ -166,7 +165,7 @@ class Products_model extends CI_Model
         {
             $data[] = [
                 'title' => 'Descuentos',
-                'key' => 'discounts',
+                'key'   => 'discounts',
                 'data'  => $get_discounts->result_array(),
             ];
         }
@@ -180,7 +179,7 @@ class Products_model extends CI_Model
         {
             $data[] = [
                 'title' => 'Precio',
-                'key' => 'prices',
+                'key'   => 'prices',
                 'data'  => $get_discounts->result_array(),
             ];
         }
@@ -193,7 +192,7 @@ class Products_model extends CI_Model
         {
             $data[] = [
                 'title' => 'Imágenes',
-                'key' => 'images',
+                'key'   => 'images',
                 'data'  => $get_images->result_array(),
             ];
         }
@@ -239,6 +238,52 @@ class Products_model extends CI_Model
             'message' => NULL,
         ];
     }
+
+    public function delete(string $id): array
+    {
+        $this->db->where('pro_id', $id);
+        $query = $this->db->delete('producto');
+
+        if ( ! $query)
+        {
+            return [
+                'data'    => FALSE,
+                'message' => 'No se ha podido eliminar el producto.',
+            ];
+            exit();
+        }
+
+        return [
+            'data'    => TRUE,
+            'message' => 'Producto eliminado correctamente.',
+        ];
+        exit();
+    }
+
+    // public function update(string $id): array
+    // {
+    //     $data = [
+    //         'pro_visibilidad' => 0,
+    //     ];
+
+    //     $this->db->where('pro_id', $id);
+    //     $query = $this->db->update('producto', $data);
+
+    //     if ( ! $query)
+    //     {
+    //         return [
+    //             'data'    => FALSE,
+    //             'message' => 'No se ha podido eliminar el producto.',
+    //         ];
+    //         exit();
+    //     }
+
+    //     return [
+    //         'data'    => TRUE,
+    //         'message' => 'Producto eliminado correctamente.',
+    //     ];
+    //     exit();
+    // }
 
     private function insert_images(array $images, int $product_id): int | bool
     {

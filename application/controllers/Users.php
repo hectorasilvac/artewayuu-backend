@@ -52,10 +52,68 @@ class Users extends CI_Controller
         exit();
     }
 
-    public function view()
+    public function delete(string $id)
     {
-        // print_r('Funcionando');
-        print_r($this->users_model->get_all());
+        $result = $this->users_model->delete(
+            id: filter_var($id, FILTER_SANITIZE_STRING),
+        );
+
+       echo json_encode($result);
+       exit();
+    }
+
+    public function edit()
+    {
+        $info = json_decode(file_get_contents('php://input'), TRUE);
+
+
+        $result = $this->users_model->edit(
+            id: filter_var($info['id'], FILTER_SANITIZE_NUMBER_INT),
+            name: filter_var($info['name'], FILTER_SANITIZE_STRING),
+            last_name: filter_var($info['lastName'], FILTER_SANITIZE_STRING),
+            email: filter_var($info['email'], FILTER_SANITIZE_EMAIL),
+            phone_number: filter_var($info['phoneNumber'], FILTER_SANITIZE_NUMBER_INT),
+            password: isset($info['password']) ? filter_var($info['password'], FILTER_SANITIZE_STRING) : NULL,
+        );
+
+       echo json_encode($result);
+       exit();
+    }
+
+    public function edit_location(string $id)
+    {
+        $info = json_decode(file_get_contents('php://input'), TRUE);
+
+
+        $result = $this->users_model->edit_location(
+            id: filter_var($id, FILTER_SANITIZE_NUMBER_INT),
+            department: filter_var($info['department'], FILTER_SANITIZE_STRING),
+            city: filter_var($info['city'], FILTER_SANITIZE_STRING),
+            address: filter_var($info['address'], FILTER_SANITIZE_STRING),
+        );
+
+       echo json_encode($result);
+       exit();
+    }
+
+    public function view(string $user_id)
+    {
+        $result = $this->users_model->view(
+            user_id: filter_var($user_id, FILTER_SANITIZE_STRING),
+        );
+
+       echo json_encode($result);
+       exit();
+    }
+
+    public function view_location(string $user_id)
+    {
+        $result = $this->users_model->view_location(
+            user_id: filter_var($user_id, FILTER_SANITIZE_STRING),
+        );
+
+       echo json_encode($result);
+       exit();
     }
 
     private function add_rules(int $rol_id): array

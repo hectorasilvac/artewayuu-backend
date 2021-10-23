@@ -51,7 +51,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
  */
 
 $route['login']                                            = 'login/auth';
-$route['users']                                            = 'users/view';
+$route['users']['GET']                                     = 'users/all';
+$route['users']['PUT']                                     = 'users/edit';
+$route['users/(:num)']['GET']                              = 'users/view/$1';
+$route['users/(:num)']['DELETE']                           = 'users/delete/$1';
+$route['users/(:num)/location']['GET']                     = 'users/view_location/$1';
+$route['users/(:num)/location']['PUT']                     = 'users/edit_location/$1';
 $route['users/add']                                        = 'users/add';
 $route['fields/(:num)']                                    = 'fields/get_by_value/$1';
 $route['categories/(:num)']                                = 'categories/$1';
@@ -62,6 +67,7 @@ $route['company/detail']                                   = 'company/get_detail
 $route['company/socialmedia']                              = 'company/get_social_media';
 $route['company/socialmedia/edit']                         = 'company/edit_social_media';
 $route['company/category']                                 = 'company/get_by_category';
+$route['products/(:num)']['DELETE']                        = 'products/delete/$1';
 $route['products/all']                                     = 'products/get_all';
 $route['products/all/(:num)']                              = 'products/get_all/$1';
 $route['products/user']                                    = 'products/get_by_user';

@@ -38,17 +38,10 @@ class Purchases extends CI_Controller
 
     public function show_order()
     {
-        $completed = FALSE;
-
-        if ($this->input->post('status') === '1')
-        {
-            $completed = TRUE;
-        }
-
         $result = $this->purchases_model->show_order(
             user_id: $this->input->post('userId'),
             role_id: (int)$this->input->post('roleId'),
-            completed: $completed,
+            completed: $this->input->post('completed'),
         );
 
        echo json_encode($result);

@@ -106,4 +106,14 @@ class Products extends CI_Controller
         header('Content-type:application/json');
         echo json_encode($result);
     }
+
+    public function delete(string $id)
+    {
+        $result = $this->products_model->delete(
+            id: filter_var($id, FILTER_SANITIZE_STRING),
+        );
+
+       echo json_encode($result);
+       exit();
+    }
 }

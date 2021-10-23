@@ -13,8 +13,9 @@ class Users_model extends CI_Model
             'inf_nombre'     => strtolower($this->input->post('name')),
             'inf_apellido'   => strtolower($this->input->post('lastName')),
             'inf_correo'     => strtolower($this->input->post('email')),
-            'inf_celular'    => strtolower($this->input->post('phoneNumber')),
+            'inf_celular'    => $this->input->post('phoneNumber'),
             'inf_contrasena' => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
+            'inf_cedula' => strtolower($this->input->post('idCard')),
         ];
 
         return [
@@ -146,6 +147,120 @@ class Users_model extends CI_Model
         exit();
     }
 
+    public function delete(string $id): array
+    {
+        $this->db->where('usu_id', $id);
+        $query = $this->db->delete('usuario');
+
+        if ( ! $query)
+        {
+            return [
+                'data'    => FALSE,
+                'message' => 'No se ha podido eliminar la cuenta.',
+            ];
+            exit();
+        }
+
+        return [
+            'data'    => TRUE,
+            'message' => 'Cuenta eliminada correctamente.',
+        ];
+        exit();
+    }
+
+    public function edit(
+        string $id,
+        string $name,
+        string $last_name,
+        string $phone_number,
+        string $email,
+        ?string $password,
+    )
+    {
+        $data = [
+            'inf_nombre'     => strtolower($name),
+            'inf_apellido'   => strtolower($last_name),
+            'inf_correo'     => strtolower($email),
+            'inf_celular'    => strtolower($phone_number),
+        ];
+
+        if ($password) {
+            $data['inf_contrasena'] = password_hash($password, PASSWORD_DEFAULT);
+        }
+
+        $data_string = '';
+
+        foreach ($data as $key => $value)
+        {
+            $data_string .= "{$key} = '{$value}', ";
+        }
+
+        $data_string = rtrim($data_string, ', ');
+
+        $query = $this->db->query("UPDATE informacionpersonal
+        LEFT JOIN usuario
+        ON informacionpersonal.inf_id = usuario.inf_id
+        SET {$data_string}
+        WHERE usu_id = {$id}");
+
+        if ( ! $query)
+        {
+            return [
+                'data'    => FALSE,
+                'message' => 'No se pudo actualizar la información.',
+            ];
+            exit();
+        }
+
+        return [
+            'data' => TRUE,
+            'message' => 'Información actualizada correctamente.',
+        ];
+    }
+
+    public function edit_location(
+        string $id,
+        string $department,
+        string $city,
+        string $address,
+    )
+    {
+        $data = [
+            'ubi_departamento' => strtolower($department),
+            'ubi_ciudad'      => strtolower($city),
+            'ubi_direccion'   => strtolower($address),
+        ];
+
+        $data_string = '';
+
+        foreach ($data as $key => $value)
+        {
+            $data_string .= "{$key} = '{$value}', ";
+        }
+
+        $data_string = rtrim($data_string, ', ');
+
+        $query = $this->db->query("UPDATE ubicacion
+        LEFT JOIN usuario
+        ON ubicacion.ubi_id = usuario.ubi_id
+        SET {$data_string}
+        WHERE usu_id = {$id}");
+
+        if ( ! $query)
+        {
+            return [
+                'data'    => FALSE,
+                'message' => 'No se pudo actualizar la dirección.',
+            ];
+            exit();
+        }
+
+        return [
+            'data' => TRUE,
+            'message' => 'Dirección actualizada correctamente.',
+        ];
+    }
+
     public function session_info(int $user_id): bool|array
     {
         $this->db->select('usuario.usu_id AS id, usuario.rol_id AS role');
@@ -165,6 +280,52 @@ class Users_model extends CI_Model
         }
 
         return array_filter($query->row_array());
+        exit();
+    }
+
+    public function view(string $user_id)
+    {
+        $this->db->select('inf_nombre AS name, inf_apellido AS lastName, inf_correo AS email, inf_celular AS phoneNumber');
+        $this->db->join('usuario', 'informacionpersonal.inf_id = usuario.inf_id');
+        $this->db->where('usu_id', $user_id);
+        $query = $this->db->get('informacionpersonal');
+
+        if ($query->num_rows() === 0)
+        {
+            return [
+                'data'    => FALSE,
+                'message' => 'No se encontró ningún usuario con esta ID.',
+            ];
+            exit();
+        }
+
+        return [
+            'data'    => $query->row_array(),
+            'message' => NULL,
+        ];
+        exit();
+    }
+    
+    public function view_location(string $user_id)
+    {
+        $this->db->select('ubi_departamento AS department, ubi_ciudad AS city, ubi_direccion AS address');
+        $this->db->join('usuario', 'ubicacion.ubi_id = usuario.ubi_id');
+        $this->db->where('usu_id', $user_id);
+        $query = $this->db->get('ubicacion');
+
+        if ($query->num_rows() === 0)
+        {
+            return [
+                'data'    => FALSE,
+                'message' => 'Dirección no encontrada.',
+            ];
+            exit();
+        }
+
+        return [
+            'data'    => $query->row_array(),
+            'message' => NULL,
+        ];
         exit();
     }
 }
