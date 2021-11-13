@@ -37,7 +37,7 @@ class Products_model extends CI_Model
         $user_id = $params['user'];
         unset($params['user']);
 
-        unset($params['discounts']); // TODO: Incluir lógica
+        unset($params['discounts']);
 
         $price_id = NULL;
 
@@ -102,10 +102,6 @@ class Products_model extends CI_Model
 
     public function get_all(int $limit)
     {
-        // $this->db->select('cat_id AS id, cat_nombre AS name, cat_valor AS value, cat_imagen AS image');
-        // $query = $this->db->get('categoria');
-        // return $query->result_array();
-
         $this->db->select('producto.pro_id AS id, dta_valor AS name, precio.prc_valor_total AS price');
         $this->db->select('(SELECT img_url FROM imagen WHERE imagen.pro_id = id LIMIT 1) AS image');
         $this->db->join('detalle', 'detalle.pro_id = producto.pro_id');
@@ -115,15 +111,6 @@ class Products_model extends CI_Model
         $query = $this->db->get('producto');
 
         return $query->result_array();
-
-        // {
-        //     id: 1,
-        //     name: 'Mochila Wayu Mini Naranja en Laberinto fabricada a Mano',
-        //     rating: 4,
-        //     price: '23450',
-        //     image:
-        //       'https://cardoli.com/164-thickbox_default/mochila-wayuu-naranja-en-laberinto.jpg',
-        //   },
     }
 
     public function get_by_id(string $id): array
@@ -213,15 +200,29 @@ class Products_model extends CI_Model
         exit();
     }
 
-    public function get_by_user(string $user_id): array
+    public function get_by_user(
+        string $user_id,
+        string $hidden,
+        ): array
     {
         $this->db->select('producto.pro_id AS id, producto.pro_visibilidad AS visibility');
         $this->db->select('precio.prc_valor_total AS price');
         $this->db->select('(SELECT detalle.dta_valor FROM detalle WHERE detalle.car_etiqueta = "name" AND detalle.pro_id = producto.pro_id) AS name');
         $this->db->select('(SELECT imagen.img_url FROM imagen WHERE imagen.pro_id = producto.pro_id LIMIT 1) AS image');
+        $this->db->select("(SELECT (ROUND((AVG(calificacion.cal_puntaje) / 10), 2) / 2) FROM calificacion LEFT JOIN detalleorden ON calificacion.ord_id = detalleorden.ord_id WHERE detalleorden.pro_id = producto.pro_id) AS rating");
         $this->db->join('precio', 'producto.prc_id = precio.prc_id');
-
+        $this->db->join('detalle', 'producto.pro_id = detalle.pro_id');
+        $this->db->where('detalle.car_etiqueta', 'quantity');
         $this->db->where('producto.usu_id', $user_id);
+
+        if ($hidden === 'true')
+        {
+            $this->db->where('detalle.dta_valor', '0');
+        }
+        else
+        {
+            $this->db->where('detalle.dta_valor >', '0');
+        }
 
         $query = $this->db->get('producto');
 
@@ -259,31 +260,6 @@ class Products_model extends CI_Model
         ];
         exit();
     }
-
-    // public function update(string $id): array
-    // {
-    //     $data = [
-    //         'pro_visibilidad' => 0,
-    //     ];
-
-    //     $this->db->where('pro_id', $id);
-    //     $query = $this->db->update('producto', $data);
-
-    //     if ( ! $query)
-    //     {
-    //         return [
-    //             'data'    => FALSE,
-    //             'message' => 'No se ha podido eliminar el producto.',
-    //         ];
-    //         exit();
-    //     }
-
-    //     return [
-    //         'data'    => TRUE,
-    //         'message' => 'Producto eliminado correctamente.',
-    //     ];
-    //     exit();
-    // }
 
     private function insert_images(array $images, int $product_id): int | bool
     {

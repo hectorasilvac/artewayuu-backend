@@ -176,6 +176,7 @@ class Purchases_model extends CI_Model
         $this->db->select('env_nombre_transportadora AS carrierName, env_fecha_entrega AS deliveryDate');
         $this->db->select("(SELECT estado.est_nombre FROM trazabilidad LEFT JOIN estado ON trazabilidad.est_id = estado.est_id WHERE trazabilidad.ord_id = {$order_id} ORDER BY trazabilidad.creado_en DESC LIMIT 1) AS status");
         $this->db->select("(SELECT estado.est_id FROM trazabilidad LEFT JOIN estado ON trazabilidad.est_id = estado.est_id WHERE trazabilidad.ord_id = {$order_id} ORDER BY trazabilidad.creado_en DESC LIMIT 1) AS statusId");
+        $this->db->select("(SELECT ord_id FROM calificacion WHERE ord_id = {$order_id}) AS rating");
         $this->db->join('usuario', 'orden.comprado_por = usuario.usu_id');
         $this->db->join('informacionpersonal comprador', 'usuario.inf_id = comprador.inf_id', 'left');
         $this->db->join('usuario usuvendedor', 'orden.vendido_por = usuvendedor.usu_id', 'left');
@@ -194,7 +195,7 @@ class Purchases_model extends CI_Model
         }
 
         $data     = [];
-        $detail   = ['id', 'buyer', 'seller', 'date', 'total', 'status', 'statusId', 'profit'];
+        $detail   = ['id', 'buyer', 'seller', 'date', 'total', 'status', 'statusId', 'profit', 'rating'];
         $shipping = ['origin', 'destination', 'shipmentDate', 'guideNumber', 'carrierName', 'deliveryDate'];
 
         foreach ($query->row_array() as $key => $value)

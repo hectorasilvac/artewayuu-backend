@@ -27,15 +27,6 @@ class Products extends CI_Controller
 
     public function get_by_user()
     {
-        if ($this->input->method(true) !== 'POST')
-        {
-            echo json_encode([
-                'data' => FALSE, 
-                'message' => 'Método de solicitud no válido.'
-            ]);
-            exit();
-        }
-
         $valid_user = $this->products_model->check_user(
             user_id:$this->input->post('id'),
             user_email:$this->input->post('email'),
@@ -49,6 +40,7 @@ class Products extends CI_Controller
 
         $get_products = $this->products_model->get_by_user(
             user_id: $this->input->post('id'),
+            hidden: $this->input->post('hidden'),
         );
 
         echo json_encode($get_products);

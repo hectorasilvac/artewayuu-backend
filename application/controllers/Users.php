@@ -34,7 +34,28 @@ class Users extends CI_Controller
 
         if ($this->form_validation->run() === FALSE)
         {
-            echo json_encode(['data' => FALSE, 'message' => 'Completa todos los campos.']);
+            $this->form_validation->set_error_delimiters('', '');
+            $error = 'Completa todo los campos';
+
+            if ( ! empty($this->form_validation->error('email')))
+            {
+                $error = $this->form_validation->error('email');
+            }
+
+            if ( ! empty($this->form_validation->error('idCard')))
+            {
+                $error = $this->form_validation->error('idCard');
+            }
+
+            if ( ! empty($this->form_validation->error('nit')))
+            {
+                $error = $this->form_validation->error('nit');
+            }
+
+            echo json_encode([
+                'data' => FALSE, 
+                'message' => $error,
+            ]);
             exit();
         }
 
@@ -121,16 +142,17 @@ class Users extends CI_Controller
         $all_validations = [
             [
                 'field' => 'idCard',
-                'label' => 'Cédula de ciudadanía',
-                'rules' => 'required',
+                'label' => 'cédula de ciudadanía',
+                'rules' => 'required|is_unique[informacionpersonal.inf_cedula]',
+                'errors' => [
+                    'required' => 'Debes ingresar una %s.',
+                    'is_unique' => 'La %s ya se encuentra registrada.',
+                ],
             ],
             [
                 'field'  => 'name',
                 'label'  => 'Nombre',
                 'rules'  => 'required',
-                'errors' => [
-                    'required' => 'You must provide a %s.',
-                ],
             ],
             [
                 'field' => 'lastName',
@@ -144,8 +166,12 @@ class Users extends CI_Controller
             ],
             [
                 'field' => 'email',
-                'label' => 'Correo electrónico',
-                'rules' => 'required',
+                'label' => 'correo electrónico',
+                'rules' => 'required|is_unique[informacionpersonal.inf_correo]',
+                'errors' => [
+                    'required' => 'Debes ingresar un %s.',
+                    'is_unique' => 'El %s ya se encuentra registrado.',
+                ],
             ],
             [
                 'field' => 'password',
@@ -166,6 +192,10 @@ class Users extends CI_Controller
                 'field' => 'nit',
                 'label' => 'NIT',
                 'rules' => 'required',
+                'errors' => [
+                    'required' => 'Debes ingresar un %s.',
+                    'is_unique' => 'El %s ya se encuentra registrado.',
+                ],
             ],
             [
                 'field' => 'department',

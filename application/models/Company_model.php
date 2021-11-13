@@ -174,13 +174,14 @@ class Company_model extends CI_Model
         $this->db->select('(SELECT detalle.dta_valor FROM detalle WHERE detalle.car_etiqueta = "name" AND detalle.pro_id = producto.pro_id) AS name');
         $this->db->select('(SELECT imagen.img_url FROM imagen WHERE imagen.pro_id = producto.pro_id LIMIT 1) AS image');
         $this->db->select('(SELECT categoria.cat_nombre FROM categoria WHERE categoria.cat_id = producto.cat_id ) AS categoryName');
+        $this->db->select("(SELECT (ROUND((AVG(calificacion.cal_puntaje) / 10), 2) / 2) FROM calificacion LEFT JOIN detalleorden ON calificacion.ord_id = detalleorden.ord_id WHERE detalleorden.pro_id = producto.pro_id) AS rating");
         $this->db->join('precio', 'producto.prc_id = precio.prc_id', 'left');
         $this->db->join('empresa', 'producto.usu_id = empresa.usu_id', 'left');
         $this->db->where('empresa.emp_id', $company_id);
         $get_products = $this->db->get('producto');
 
         
-        if ($get_products->num_rows() === 0)
+        `  if ($get_products->num_rows() === 0)
         {
            $get_products = 'No hay productos publicados por esta empresa';
         }
