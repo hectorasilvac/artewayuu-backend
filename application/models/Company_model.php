@@ -89,7 +89,7 @@ class Company_model extends CI_Model
         if ($query->num_rows() === 0)
         {
             return [
-                'data'    => FALSE,
+                'data'    => TRUE,
                 'message' => 'No se han encontrado redes sociales de esta empresa.',
             ];
             exit();
