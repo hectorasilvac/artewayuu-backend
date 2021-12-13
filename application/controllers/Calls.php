@@ -11,18 +11,17 @@ class Calls extends CI_Controller
 
     public function all()
     {
-/*         $result = $this->purchases_model->add_order(
-            address: $this->input->post('address'),
-            buyer_id: $this->input->post('buyerId'),
-            payment_method: $this->input->post('payment'),
-            seller_id: $this->input->post('sellerId'),
-            total: $this->input->post('total'),
-            total_profit: $this->input->post('totalProfit'),
-            products: json_decode($this->input->post('products'), TRUE),
+        $result = $this->calls_model->add(
+            name: $this->input->post('name'),
+            description: $this->input->post('description'),
+            startDate: $this->input->post('startDate'),
+            endDate: $this->input->post('endDate'),
+            image: $this->input->post('image'),
+            url: $this->input->post('url')
         );
 
        echo json_encode($result);
-       exit(); */
+       exit();
     }
 
 //     $result = $this->purchases_model->show_info(

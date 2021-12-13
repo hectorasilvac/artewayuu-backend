@@ -181,7 +181,7 @@ class Company_model extends CI_Model
         $get_products = $this->db->get('producto');
 
         
-        `  if ($get_products->num_rows() === 0)
+        if ($get_products->num_rows() === 0)
         {
            $get_products = 'No hay productos publicados por esta empresa';
         }

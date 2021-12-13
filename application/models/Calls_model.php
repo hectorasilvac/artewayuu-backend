@@ -10,14 +10,13 @@ class Purchases_model extends CI_Model
         $this->load->helper('url');
     }
 
-    public function add_order(
-        string $address,
-        string $buyer_id,
-        string $payment_method,
-        string $seller_id,
-        string $total,
-        string $total_profit,
-        array $products
+    public function add(
+        string $name,
+        string $description,
+        string $startDate,
+        string $endDate,
+        string $image,
+        string $url
     ): array
     {
         $insert_shipping = $this->insert_shipping($address);
@@ -77,7 +76,7 @@ class Purchases_model extends CI_Model
             'message' => 'Pedido registrado correctamente.',
         ];
     }
-
+/* 
     public function show_info(string $product_id, string $user_id): array
     {
         $this->db->select('car_etiqueta AS label, dta_valor AS value');
@@ -489,5 +488,5 @@ class Purchases_model extends CI_Model
             'data'    => $this->db->insert_id(),
             'message' => NULL,
         ];
-    }
+    } */
 }

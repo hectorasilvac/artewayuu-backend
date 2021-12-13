@@ -42,6 +42,31 @@ class Login extends CI_Controller
         exit();
     }
 
+    public function verify_recovery_data()
+    {
+        $result = $this->login_model->verify_recovery_data(
+            id: mb_strtolower($this->input->post('id')),
+            name: mb_strtolower($this->input->post('name')),
+            last_name: mb_strtolower($this->input->post('lastName')),
+            email: mb_strtolower($this->input->post('email')),
+            phone_number: mb_strtolower($this->input->post('phoneNumber')),
+        );
+
+       echo json_encode($result);
+    }
+
+    public function update_password()
+    {
+        $result = $this->login_model->update_password(
+            id: mb_strtolower($this->input->post('id')),
+            email: mb_strtolower($this->input->post('email')),
+            password: $this->input->post('password'),
+            phone_number: mb_strtolower($this->input->post('phoneNumber')),
+        );
+
+       echo json_encode($result);
+    }
+
     private function auth_rules(): array
     {
         return [

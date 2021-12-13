@@ -52,4 +52,63 @@ class Login_model extends CI_Model
         ];
         exit();
     }
+
+    public function verify_recovery_data(
+        string $id,
+        string $name,
+        string $last_name,
+        string $email,
+        string $phone_number,
+    ): array
+    {
+
+        $this->db->select('inf_cedula, inf_nombre, inf_apellido, inf_correo, inf_celular');
+        $this->db->where('inf_cedula', $id);
+        $this->db->where('inf_nombre', $name);
+        $this->db->where('inf_apellido', $last_name);
+        $this->db->where('inf_correo', $email);
+        $this->db->where('inf_celular', $phone_number);
+
+        $query = $this->db->get('informacionpersonal');
+
+        if ($query->num_rows() === 0)
+        {
+            return [
+                'data'    => FALSE,
+                'message' => 'Información no encontrada.',
+            ];
+        }
+
+        return [
+            'data'    => TRUE,
+            'message' => NULL,
+        ];
+    }
+
+    public function update_password(
+        string $id,
+        string $email,
+        string $password,
+        string $phone_number,
+    )
+    {
+        $this->db->set('inf_contrasena', password_hash($password, PASSWORD_DEFAULT));
+        $this->db->where('inf_cedula', $id);
+        $this->db->where('inf_correo', $email);
+        $this->db->where('inf_celular', $phone_number);
+        $this->db->update('informacionpersonal');
+
+        if ($this->db->affected_rows() === 0)
+        {
+            return [
+                'data'    => FALSE,
+                'message' => 'Ha ocurrido un error al actualizar la contraseña.',
+            ];
+        }
+
+        return [
+            'data'    => TRUE,
+            'message' => NULL,
+        ];
+    }
 }
