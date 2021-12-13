@@ -52,7 +52,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 $route['login']                                    = 'login/auth';
 $route['login/verify']['POST']                     = 'login/verify_recovery_data';
-$route['login/update']['POST']                      = 'login/update_password';
+$route['login/update']['POST']                     = 'login/update_password';
+$route['calls/all']['GET']                         = 'calls/show_all';
 $route['users']['GET']                             = 'users/all';
 $route['users']['PUT']                             = 'users/edit';
 $route['users/(:num)']['GET']                      = 'users/view/$1';

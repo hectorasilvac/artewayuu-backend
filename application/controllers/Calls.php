@@ -9,26 +9,11 @@ class Calls extends CI_Controller
         $this->load->model('calls_model');
     }
 
-    public function all()
+    public function show_all()
     {
-        $result = $this->calls_model->add(
-            name: $this->input->post('name'),
-            description: $this->input->post('description'),
-            startDate: $this->input->post('startDate'),
-            endDate: $this->input->post('endDate'),
-            image: $this->input->post('image'),
-            url: $this->input->post('url')
-        );
+        $result = $this->calls_model->show_all();
 
        echo json_encode($result);
        exit();
     }
-
-//     $result = $this->purchases_model->show_info(
-//         product_id: filter_var($product_id, FILTER_SANITIZE_STRING),
-//         user_id: filter_var($user_id, FILTER_SANITIZE_STRING)
-//     );
-
-//    echo json_encode($result);
-//    exit();
 }
