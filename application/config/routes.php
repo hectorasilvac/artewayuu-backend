@@ -75,6 +75,7 @@ $route['products/all']                             = 'products/get_all';
 $route['products/all/(:num)']                      = 'products/get_all/$1';
 $route['products/user']                            = 'products/get_by_user';
 $route['products/get']                             = 'products/get_by_id';
+$route['products/update']['POST']                  = 'products/update';
 $route['purchases/info/(:any)/user/(:any)']['GET'] = 'purchases/show_info/$1/$2';
 $route['purchases/order']['POST']                  = 'purchases/add_order';
 $route['purchases/order/(:num)']['GET']            = 'purchases/show_order_detail/$1';

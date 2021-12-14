@@ -32,6 +32,58 @@ class Products_model extends CI_Model
         exit();
     }
 
+    public function update(
+        string $id,
+        string $name,
+        string $description,
+        string $quantity,
+    )
+    {
+        $this->db->set('dta_valor', $name);
+        $this->db->where('car_etiqueta', 'name');
+        $this->db->where('pro_id', $id);
+        $this->db->update('detalle');
+
+        if ($this->db->affected_rows() === 0)
+        {
+            return [
+                'data'    => FALSE,
+                'message' => 'Ha ocurrido un error al actualizar el nombre.',
+            ];
+        }
+
+        $this->db->set('dta_valor', $description);
+        $this->db->where('car_etiqueta', 'description');
+        $this->db->where('pro_id', $id);
+        $this->db->update('detalle');
+
+        if ($this->db->affected_rows() === 0)
+        {
+            return [
+                'data'    => FALSE,
+                'message' => 'Ha ocurrido un error al actualizar la descripción.',
+            ];
+        }
+
+        $this->db->set('dta_valor', $quantity);
+        $this->db->where('car_etiqueta', 'quantity');
+        $this->db->where('pro_id', $id);
+        $this->db->update('detalle');
+
+        if ($this->db->affected_rows() === 0)
+        {
+            return [
+                'data'    => FALSE,
+                'message' => 'Ha ocurrido un error al actualizar la cantidad.',
+            ];
+        }
+
+        return [
+            'data'    => TRUE,
+            'message' => NULL,
+        ];
+    }
+
     public function add(array $params)
     {
         $user_id = $params['user'];
