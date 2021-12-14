@@ -22,21 +22,22 @@ class Purchases_model extends CI_Model
     {
         $insert_shipping = $this->insert_shipping($address);
 
-        if ( ! $insert_shipping['data'])
-        {
+        if (! $insert_shipping['data']) {
             return $insert_shipping;
             exit();
         }
 
         $shipping_id = $insert_shipping['data'];
 
+        $date = new DateTime(null, new DateTimeZone('America/Bogota'));
+    }
         $order = [
             'comprado_por'    => $buyer_id,
             'ord_metodo_pago' => $payment_method,
             'vendido_por'     => $seller_id,
             'ord_total'       => $total,
             'ord_ganancia'    => $total_profit,
-            'ord_creado'      => date('Y-m-d H:i:s'),
+            'ord_creado'      => $date->format('Y-m-d H:i:s'),
             'env_id'          => $shipping_id,
         ];
 
