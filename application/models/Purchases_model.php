@@ -30,7 +30,7 @@ class Purchases_model extends CI_Model
         $shipping_id = $insert_shipping['data'];
 
         $date = new DateTime(null, new DateTimeZone('America/Bogota'));
-    }
+        
         $order = [
             'comprado_por'    => $buyer_id,
             'ord_metodo_pago' => $payment_method,
