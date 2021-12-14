@@ -29,8 +29,8 @@ class Products extends CI_Controller
     {
         $result = $this->products_model->update(
             id: $this->input->post('id'),
-            name: mb_strtolower($this->input->post('name')),
-            description: mb_strtolower($this->input->post('description')),
+            name: $this->input->post('name'),
+            description: $this->input->post('description'),
             quantity: $this->input->post('quantity'),
         );
 
