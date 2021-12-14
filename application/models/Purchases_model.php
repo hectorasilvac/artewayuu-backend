@@ -310,11 +310,13 @@ class Purchases_model extends CI_Model
         string $status_id
     ): array
     {
+        $date = new DateTime(null, new DateTimeZone('America/Bogota'));
+
         $data = [
             'tra_comentario' => $comment,
             'tra_url'        => $url_attached,
             'creado_por'     => $user_id,
-            'creado_en'      => date('Y-m-d H:i:s'),
+            'creado_en'      => $date->format('Y-m-d H:i:s'),
             'ord_id'         => $order_id,
             'est_id'         => $status_id,
         ];

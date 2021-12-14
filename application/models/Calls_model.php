@@ -11,7 +11,7 @@ class Calls_model extends CI_Model
  
     public function show_all(): array
     {
-        $this->db->select('con_nombre AS name, con_descripcion AS description, con_fecha_inicio AS start, con_fecha_final AS end, con_image AS image, con_url AS url');
+        $this->db->select('con_id AS id, con_nombre AS name, con_descripcion AS description, con_fecha_inicio AS start, con_fecha_final AS end, con_image AS image, con_url AS url');
         $query = $this->db->get('convocatoria');
 
         if ($query->num_rows() === 0)
